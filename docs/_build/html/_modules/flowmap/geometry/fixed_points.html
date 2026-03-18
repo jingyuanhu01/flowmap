@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flowmap.geometry.fixed_points &mdash; FlowMap 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            FlowMap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">flowmap</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">FlowMap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">flowmap.geometry.fixed_points</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for flowmap.geometry.fixed_points</h1><div class="highlight"><pre>
+<span></span><span class="c1"># flowmap/geometry/fixed_points.py</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">eigvals</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="FixedPointAnalyzer">
+<a class="viewcode-back" href="../../../flowmap.geometry.html#flowmap.geometry.FixedPointAnalyzer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FixedPointAnalyzer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fixed-point detection and classification for smooth vector fields</span>
+<span class="sd">    defined on a FlowMap embedding.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    embedding : VectorFieldEmbedder</span>
+<span class="sd">        Must expose:</span>
+
+<span class="sd">        - X_emb : ndarray (N, d)</span>
+<span class="sd">        - V_emb : ndarray (N, d)</span>
+<span class="sd">        - spline : Spline</span>
+<span class="sd">        - spline_vf : Spline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">embedding</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_emb</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">X_emb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V_emb</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">V_emb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spline</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">spline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spline_vf</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">spline_vf</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixed_point_info</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Public API</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="FixedPointAnalyzer.identify_fixed_points">
+<a class="viewcode-back" href="../../../flowmap.geometry.html#flowmap.geometry.FixedPointAnalyzer.identify_fixed_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identify_fixed_points</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">Xg</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">Vg</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">grid_shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
+        <span class="n">speed_smooth_sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">global_speed_quantile</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">radius_percent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">weighted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identify and classify fixed points from grid-sampled velocities.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Xg : ndarray (Ng, d)</span>
+<span class="sd">            Grid coordinates.</span>
+<span class="sd">        Vg : ndarray (Ng, d)</span>
+<span class="sd">            Velocity evaluated on grid.</span>
+<span class="sd">        grid_shape : tuple</span>
+<span class="sd">            Shape of grid used for reshaping.</span>
+<span class="sd">        speed_smooth_sigma : float</span>
+<span class="sd">            Gaussian smoothing bandwidth.</span>
+<span class="sd">        global_speed_quantile : float</span>
+<span class="sd">            Global speed threshold for filtering.</span>
+<span class="sd">        radius_percent : float</span>
+<span class="sd">            Neighborhood radius relative to embedding scale.</span>
+<span class="sd">        weighted : bool</span>
+<span class="sd">            Whether to use weighted Jacobian fitting.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of dict</span>
+<span class="sd">            Each dict contains:</span>
+
+<span class="sd">            - position : ndarray (d,)</span>
+<span class="sd">            - jacobian : ndarray (d, d)</span>
+<span class="sd">            - type : str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="c1"># 1. Metric speed</span>
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="n">Gg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">Xg</span><span class="p">)</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ni,nij,nj-&gt;n&quot;</span><span class="p">,</span> <span class="n">Vg</span><span class="p">,</span> <span class="n">Gg</span><span class="p">,</span> <span class="n">Vg</span><span class="p">))</span>
+
+        <span class="n">speed_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">speed_field</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">speed</span><span class="p">)]</span> <span class="o">=</span> <span class="n">speed</span>
+
+        <span class="n">speed_filled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span>
+            <span class="n">speed_field</span><span class="p">,</span>
+            <span class="n">nan</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">speed_field</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="c1"># 2. Smooth</span>
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="n">speed_smooth</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span>
+            <span class="n">speed_filled</span><span class="p">,</span>
+            <span class="n">sigma</span><span class="o">=</span><span class="n">speed_smooth_sigma</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="c1"># 3. Local minima</span>
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="n">minima_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_minima_2d</span><span class="p">(</span><span class="n">speed_smooth</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">minima_mask</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="c1"># 4. Global speed filter</span>
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="n">global_thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanquantile</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">global_speed_quantile</span><span class="p">)</span>
+
+        <span class="n">flat_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel_multi_index</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">idx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span>
+            <span class="n">dims</span><span class="o">=</span><span class="n">grid_shape</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">speed_field</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">flat_idx</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">global_thresh</span>
+        <span class="n">flat_idx</span> <span class="o">=</span> <span class="n">flat_idx</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">flat_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">fps</span> <span class="o">=</span> <span class="n">Xg</span><span class="p">[</span><span class="n">flat_idx</span><span class="p">]</span>
+
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="c1"># 5. Optional refinement</span>
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="n">fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refine_candidates</span><span class="p">(</span><span class="n">fps</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="c1"># 6. Local classification</span>
+        <span class="c1"># --------------------------------------------------------------</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="n">fps</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classify_point</span><span class="p">(</span>
+                <span class="n">fp</span><span class="p">,</span>
+                <span class="n">radius_percent</span><span class="o">=</span><span class="n">radius_percent</span><span class="p">,</span>
+                <span class="n">weighted</span><span class="o">=</span><span class="n">weighted</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixed_point_info</span> <span class="o">=</span> <span class="n">results</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Internal utilities</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_local_minima_2d</span><span class="p">(</span><span class="n">Z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">dj</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">di</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">dj</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">mask</span> <span class="o">&amp;=</span> <span class="n">Z</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dj</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">mask</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">mask</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">mask</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_refine_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fps</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refine fixed-point candidates by minimizing ||v(x)||² locally.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">vf_energy</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline_vf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="n">refined</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="n">fps</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                    <span class="n">vf_energy</span><span class="p">,</span>
+                    <span class="n">x0</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">maxiter</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">refined</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span> <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span> <span class="k">else</span> <span class="n">fp</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">refined</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">refined</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_classify_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">radius_percent</span><span class="p">,</span> <span class="n">weighted</span><span class="p">):</span>
+
+        <span class="n">emb_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_emb</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">radius_percent</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">emb_range</span><span class="p">)</span>
+
+        <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_emb</span> <span class="o">-</span> <span class="n">fp</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">radius</span>
+
+        <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">Xloc</span> <span class="o">=</span> <span class="n">dx</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">Vloc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_emb</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_jacobian</span><span class="p">(</span><span class="n">Xloc</span><span class="p">,</span> <span class="n">Vloc</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="n">weighted</span><span class="p">)</span>
+        <span class="n">fp_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classify_fixed_point</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span>
+            <span class="n">jacobian</span><span class="o">=</span><span class="n">J</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">fp_type</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_jacobian</span><span class="p">(</span><span class="n">Xloc</span><span class="p">,</span> <span class="n">Vloc</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">weighted</span><span class="p">:</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">Xloc</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Xloc</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">))[:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">Xloc</span> <span class="o">=</span> <span class="n">Xloc</span> <span class="o">*</span> <span class="n">w</span>
+            <span class="n">Vloc</span> <span class="o">=</span> <span class="n">Vloc</span> <span class="o">*</span> <span class="n">w</span>
+
+        <span class="n">J</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">lstsq</span><span class="p">(</span><span class="n">Xloc</span><span class="p">,</span> <span class="n">Vloc</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">J</span>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Linear stability classification</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="FixedPointAnalyzer.classify_fixed_point">
+<a class="viewcode-back" href="../../../flowmap.geometry.html#flowmap.geometry.FixedPointAnalyzer.classify_fixed_point">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">classify_fixed_point</span><span class="p">(</span><span class="n">J</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Classify a fixed point using linear stability analysis of its Jacobian.</span>
+<span class="sd">    </span>
+<span class="sd">        The classification is determined from the eigenvalue spectrum</span>
+<span class="sd">        of the Jacobian matrix evaluated at the fixed point.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        J : ndarray of shape (d, d)</span>
+<span class="sd">            Jacobian matrix of the vector field at the fixed point.</span>
+<span class="sd">        eps : float, default=1e-4</span>
+<span class="sd">            Numerical tolerance used to determine whether eigenvalues</span>
+<span class="sd">            are considered zero or have non-negligible imaginary parts.</span>
+<span class="sd">    </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            One of:</span>
+<span class="sd">    </span>
+<span class="sd">            - &quot;Stable node (sink)&quot;</span>
+<span class="sd">            - &quot;Unstable node (source)&quot;</span>
+<span class="sd">            - &quot;Saddle&quot;</span>
+<span class="sd">            - &quot;Degenerate&quot;</span>
+<span class="sd">            - &quot;Center&quot;</span>
+<span class="sd">            - &quot;Spiral in&quot;</span>
+<span class="sd">            - &quot;Spiral out&quot;</span>
+<span class="sd">            - &quot;Mixed focus&quot;</span>
+<span class="sd">    </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Let :math:`\\lambda_i \\in \\mathbb{C}` denote the eigenvalues of ``J``.</span>
+<span class="sd">    </span>
+<span class="sd">        - Stability is determined by the sign of :math:`\\Re(\\lambda_i)`.</span>
+<span class="sd">        - Purely real spectra correspond to node or saddle behavior.</span>
+<span class="sd">        - Complex conjugate pairs indicate rotational (spiral or center) dynamics.</span>
+<span class="sd">        - A fixed point is:</span>
+<span class="sd">            - Stable if all :math:`\\Re(\\lambda_i) &lt; 0`</span>
+<span class="sd">            - Unstable if all :math:`\\Re(\\lambda_i) &gt; 0`</span>
+<span class="sd">            - A saddle if signs are mixed</span>
+<span class="sd">    </span>
+<span class="sd">        This classification corresponds to the local linearization of the</span>
+<span class="sd">        dynamical system near the fixed point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">eigs</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+        <span class="n">re</span><span class="p">,</span> <span class="n">im</span> <span class="o">=</span> <span class="n">eigs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">eigs</span><span class="o">.</span><span class="n">imag</span>
+        <span class="n">has_im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_im</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">re</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">eps</span><span class="p">):</span> <span class="k">return</span> <span class="s2">&quot;Stable node (sink)&quot;</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">re</span> <span class="o">&gt;</span>  <span class="n">eps</span><span class="p">):</span> <span class="k">return</span> <span class="s2">&quot;Unstable node (source)&quot;</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">re</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">re</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">eps</span><span class="p">):</span> <span class="k">return</span> <span class="s2">&quot;Saddle&quot;</span>
+            <span class="k">return</span> <span class="s2">&quot;Degenerate&quot;</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="n">re</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span> <span class="k">return</span> <span class="s2">&quot;Center&quot;</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="s2">&quot;Spiral in&quot;</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="s2">&quot;Spiral out&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Mixed focus&quot;</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

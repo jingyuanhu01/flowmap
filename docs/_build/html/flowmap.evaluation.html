@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flowmap.evaluation package &mdash; FlowMap 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FlowMap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">flowmap</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FlowMap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">flowmap.evaluation package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/flowmap.evaluation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="flowmap-evaluation-package">
+<h1>flowmap.evaluation package<a class="headerlink" href="#flowmap-evaluation-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-flowmap.evaluation.spline_fit_evaluator">
+<span id="flowmap-evaluation-spline-fit-evaluator-module"></span><h2>flowmap.evaluation.spline_fit_evaluator module<a class="headerlink" href="#module-flowmap.evaluation.spline_fit_evaluator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.evaluation.spline_fit_evaluator.SplineFitEvaluator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.evaluation.spline_fit_evaluator.</span></span><span class="sig-name descname"><span class="pre">SplineFitEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/evaluation/spline_fit_evaluator.html#SplineFitEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.evaluation.spline_fit_evaluator.SplineFitEvaluator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Evaluate reconstruction accuracy of manifold and velocity splines.</p>
+<p>This class quantifies how well a fitted spline model reconstructs:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Feature values (e.g. genes or principal components)</p></li>
+<li><p>Vector field values</p></li>
+</ol>
+</div></blockquote>
+<p>It supports evaluation at two levels:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Gene-level splines (<code class="docutils literal notranslate"><span class="pre">spline_gene</span></code>, <code class="docutils literal notranslate"><span class="pre">spline_vf_gene</span></code>)</p></li>
+<li><p>Embedding-level splines (<code class="docutils literal notranslate"><span class="pre">spline</span></code>, <code class="docutils literal notranslate"><span class="pre">spline_vf</span></code>)</p></li>
+</ul>
+</div></blockquote>
+<p>If <code class="docutils literal notranslate"><span class="pre">mode</span></code> is not specified, gene-level splines are used when
+available; otherwise embedding-level splines are evaluated.</p>
+<p class="rubric">Notes</p>
+<p>Let <span class="math notranslate nohighlight">\(f(z)\)</span> denote the spline mapping from embedding
+coordinates <span class="math notranslate nohighlight">\(z\)</span> to feature space, and let
+<span class="math notranslate nohighlight">\(J(z) = \nabla f(z)\)</span> denote its Jacobian.</p>
+<p>Expression reconstruction is evaluated via:</p>
+<div class="math notranslate nohighlight">
+\[R^2 = 1 - \frac{\|X - \hat{X}\|^2}{\|X - \bar{X}\|^2}\]</div>
+<p>Velocity reconstruction is evaluated using the local linear
+pushforward:</p>
+<div class="math notranslate nohighlight">
+\[\hat{V} = J(z) \beta,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta\)</span> is obtained by least-squares fitting to
+the observed velocity.</p>
+<p>This provides both global and per-feature metrics.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.evaluation.spline_fit_evaluator.SplineFitEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/flowmap/evaluation/spline_fit_evaluator.html#SplineFitEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.evaluation.spline_fit_evaluator.SplineFitEvaluator.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Compute reconstruction metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>Dictionary containing:</p>
+<dl class="simple">
+<dt>expr_r2<span class="classifier">float</span></dt><dd><p>Mean expression R² across features.</p>
+</dd>
+<dt>vel_r2<span class="classifier">float</span></dt><dd><p>Mean velocity R² across features.</p>
+</dd>
+<dt>expr_r2_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature expression R² values.</p>
+</dd>
+<dt>vel_r2_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature velocity R² values.</p>
+</dd>
+<dt>expr_corr_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature Pearson correlation (expression).</p>
+</dd>
+<dt>vel_corr_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature Pearson correlation (velocity).</p>
+</dd>
+<dt>X_pred<span class="classifier">ndarray</span></dt><dd><p>Reconstructed feature values.</p>
+</dd>
+<dt>V_pred<span class="classifier">ndarray</span></dt><dd><p>Reconstructed velocity values.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Expression reconstruction evaluates the spline prediction:</p>
+<div class="math notranslate nohighlight">
+\[\hat{X} = f(z)\]</div>
+<p>Velocity reconstruction evaluates the local linear pushforward:</p>
+<div class="math notranslate nohighlight">
+\[\hat{V} = J(z) \beta\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta\)</span> is obtained via least-squares fit at
+each cell independently.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-flowmap.evaluation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-flowmap.evaluation" title="Link to this heading"></a></h2>
+<p>Evaluation submodule.</p>
+<p>Spline reconstruction accuracy and statistical testing.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.evaluation.SplineFitEvaluator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.evaluation.</span></span><span class="sig-name descname"><span class="pre">SplineFitEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/evaluation/spline_fit_evaluator.html#SplineFitEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.evaluation.SplineFitEvaluator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Evaluate reconstruction accuracy of manifold and velocity splines.</p>
+<p>This class quantifies how well a fitted spline model reconstructs:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Feature values (e.g. genes or principal components)</p></li>
+<li><p>Vector field values</p></li>
+</ol>
+</div></blockquote>
+<p>It supports evaluation at two levels:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Gene-level splines (<code class="docutils literal notranslate"><span class="pre">spline_gene</span></code>, <code class="docutils literal notranslate"><span class="pre">spline_vf_gene</span></code>)</p></li>
+<li><p>Embedding-level splines (<code class="docutils literal notranslate"><span class="pre">spline</span></code>, <code class="docutils literal notranslate"><span class="pre">spline_vf</span></code>)</p></li>
+</ul>
+</div></blockquote>
+<p>If <code class="docutils literal notranslate"><span class="pre">mode</span></code> is not specified, gene-level splines are used when
+available; otherwise embedding-level splines are evaluated.</p>
+<p class="rubric">Notes</p>
+<p>Let <span class="math notranslate nohighlight">\(f(z)\)</span> denote the spline mapping from embedding
+coordinates <span class="math notranslate nohighlight">\(z\)</span> to feature space, and let
+<span class="math notranslate nohighlight">\(J(z) = \nabla f(z)\)</span> denote its Jacobian.</p>
+<p>Expression reconstruction is evaluated via:</p>
+<div class="math notranslate nohighlight">
+\[R^2 = 1 - \frac{\|X - \hat{X}\|^2}{\|X - \bar{X}\|^2}\]</div>
+<p>Velocity reconstruction is evaluated using the local linear
+pushforward:</p>
+<div class="math notranslate nohighlight">
+\[\hat{V} = J(z) \beta,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta\)</span> is obtained by least-squares fitting to
+the observed velocity.</p>
+<p>This provides both global and per-feature metrics.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.evaluation.SplineFitEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/flowmap/evaluation/spline_fit_evaluator.html#SplineFitEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.evaluation.SplineFitEvaluator.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Compute reconstruction metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>Dictionary containing:</p>
+<dl class="simple">
+<dt>expr_r2<span class="classifier">float</span></dt><dd><p>Mean expression R² across features.</p>
+</dd>
+<dt>vel_r2<span class="classifier">float</span></dt><dd><p>Mean velocity R² across features.</p>
+</dd>
+<dt>expr_r2_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature expression R² values.</p>
+</dd>
+<dt>vel_r2_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature velocity R² values.</p>
+</dd>
+<dt>expr_corr_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature Pearson correlation (expression).</p>
+</dd>
+<dt>vel_corr_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature Pearson correlation (velocity).</p>
+</dd>
+<dt>X_pred<span class="classifier">ndarray</span></dt><dd><p>Reconstructed feature values.</p>
+</dd>
+<dt>V_pred<span class="classifier">ndarray</span></dt><dd><p>Reconstructed velocity values.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Expression reconstruction evaluates the spline prediction:</p>
+<div class="math notranslate nohighlight">
+\[\hat{X} = f(z)\]</div>
+<p>Velocity reconstruction evaluates the local linear pushforward:</p>
+<div class="math notranslate nohighlight">
+\[\hat{V} = J(z) \beta\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta\)</span> is obtained via least-squares fit at
+each cell independently.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

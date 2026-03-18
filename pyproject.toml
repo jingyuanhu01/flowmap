@@ -1,0 +1,28 @@
+[project]
+name = "flowmap"
+version = "0.2.0"
+description = "Geometry-aware vector field embeddings for RNA velocity"
+authors = [{ name = "Jingyuan Hu" }]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.22",
+    "scipy>=1.9",
+    "scikit-learn",
+    "statsmodels",
+    "matplotlib"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "ruff",
+    "mypy"
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

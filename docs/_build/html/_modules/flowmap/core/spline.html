@@ -1,0 +1,898 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flowmap.core.spline &mdash; FlowMap 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            FlowMap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">flowmap</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">FlowMap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">flowmap.core.spline</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for flowmap.core.spline</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">flowmap.spline</span>
+<span class="sd">==============</span>
+
+<span class="sd">Polyharmonic spline model used for geometry-aware vector field embeddings.</span>
+
+<span class="sd">Implements a 2D polyharmonic spline with kernel:</span>
+
+<span class="sd">    φ(r) = r⁴ log r</span>
+
+<span class="sd">This choice guarantees C² continuity of the mapping and well-defined</span>
+<span class="sd">Hessians, making it suitable for curvature and geometric computations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">cdist</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">svd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">root_scalar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">comb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+
+<div class="viewcode-block" id="Spline">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Spline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Polyharmonic spline regression model (2D triharmonic spline).</span>
+
+<span class="sd">    This model represents a smooth mapping</span>
+
+<span class="sd">        f : ℝᵈ → ℝᴰ</span>
+
+<span class="sd">    of the form:</span>
+
+<span class="sd">        f(x) = Σᵢ wᵢ φ(||x - cᵢ||) + P₂(x) a</span>
+
+<span class="sd">    where:</span>
+
+<span class="sd">    - φ(r) = r⁴ log r  (polyharmonic kernel of order m=3 in 2D)</span>
+<span class="sd">    - cᵢ are control points</span>
+<span class="sd">    - wᵢ are radial weights</span>
+<span class="sd">    - P₂(x) contains all monomials up to degree 2</span>
+<span class="sd">    - a are polynomial coefficients</span>
+
+<span class="sd">    The radial weights are ridge-regularized.</span>
+
+<span class="sd">    This spline is C² smooth and suitable for:</span>
+
+<span class="sd">    - Jacobian computation</span>
+<span class="sd">    - Hessian computation</span>
+<span class="sd">    - Riemannian metric construction</span>
+<span class="sd">    - Curvature and torsion analysis</span>
+<span class="sd">    - Velocity pushforwards</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : ndarray of shape (N, d)</span>
+<span class="sd">        Input training points.</span>
+
+<span class="sd">    n_control_points : int, optional (default=1000)</span>
+<span class="sd">        Number of control points. If larger than N,</span>
+<span class="sd">        all points are used.</span>
+
+<span class="sd">    max_n : int, optional (default=4000)</span>
+<span class="sd">        Warning threshold for large datasets.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    For polyharmonic splines of order m=3 in 2D,</span>
+<span class="sd">    the polynomial tail must have degree m-1 = 2.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Duchon (1977), Splines minimizing rotation-invariant seminorms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">n_control_points</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">max_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N_total</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_total</span> <span class="o">&gt;</span> <span class="n">max_n</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[Spline] Large dataset (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N_total</span><span class="si">}</span><span class="s2"> points). &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Consider subsampling ≤ </span><span class="si">{</span><span class="n">max_n</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">n_control_points</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">n_control_points</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">control_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">control_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_control_points_kmeans</span><span class="p">(</span>
+                <span class="n">X</span><span class="p">,</span> <span class="n">n_control_points</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">control_indices</span><span class="p">]</span>
+
+        <span class="n">pairwise_distances</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_points</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">control_indices</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="p">(</span><span class="n">pairwise_distances</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">radial_coefficients</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_coefficients</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dof</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">singular_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_poly_design</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct polynomial design matrix up to degree 2.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray of shape (N, d)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        P : ndarray of shape (N, p)</span>
+<span class="sd">            Polynomial feature matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">))]</span>
+        <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+                <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])[:,</span> <span class="kc">None</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_poly_dof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of polynomial basis functions.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            C(d+2, 2)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">comb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Polyharmonic kernel φ(r) = r⁴ log r.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r : ndarray</span>
+<span class="sd">            Pairwise distances.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Kernel matrix with φ(0) = 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="Spline.compute_dof">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.compute_dof">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_dof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lambda_reg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute effective degrees of freedom (DoF) of the spline model.</span>
+
+<span class="sd">        The radial contribution is computed from the singular values</span>
+<span class="sd">        of the kernel matrix Φ:</span>
+
+<span class="sd">            dof_radial = Σ_i s_i² / (s_i² + λ)</span>
+
+<span class="sd">        where s_i are singular values of Φ.</span>
+
+<span class="sd">        The polynomial contribution equals the number of polynomial</span>
+<span class="sd">        basis functions (degree 2):</span>
+
+<span class="sd">            dof_poly = C(d+2, 2)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lambda_reg : float</span>
+<span class="sd">            Ridge regularization parameter λ.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Effective degrees of freedom.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This corresponds to the trace of the smoothing matrix</span>
+<span class="sd">        for ridge-regularized RBF regression.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">singular_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">svd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_matrix</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">singular_values</span> <span class="o">=</span> <span class="n">S</span>
+
+        <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">singular_values</span>
+        <span class="n">radial_dof</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">lambda_reg</span><span class="p">))</span>
+
+        <span class="n">poly_dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_dof</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">radial_dof</span> <span class="o">+</span> <span class="n">poly_dof</span><span class="p">)</span></div>
+
+
+
+    
+<div class="viewcode-block" id="Spline.find_lambda_for_dof">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.find_lambda_for_dof">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_lambda_for_dof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">fallback_lambda</span><span class="o">=</span><span class="mf">1e6</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the regularization parameter (lambda_reg) that achieves a target degrees </span>
+<span class="sd">        of freedom using a numerical root solver. Falls back to a fixed lambda if search fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">lam</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_dof</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span> <span class="o">-</span> <span class="n">dof</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">f_low</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">)</span>
+            <span class="n">f_high</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">f_low</span> <span class="o">*</span> <span class="n">f_high</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The specified dof_target (</span><span class="si">{</span><span class="n">dof</span><span class="si">}</span><span class="s2">) is too small or otherwise infeasible. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;f(1e-6) = </span><span class="si">{</span><span class="n">f_low</span><span class="si">}</span><span class="s2"> and f(1e6) = </span><span class="si">{</span><span class="n">f_high</span><span class="si">}</span><span class="s2"> do not have opposite signs.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">root_scalar</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">bracket</span><span class="o">=</span><span class="p">[</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">],</span> <span class="n">xtol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;brentq&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sol</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">sol</span><span class="o">.</span><span class="n">root</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Lambda finding did not converge.&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Lambda search failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting lambda_reg = </span><span class="si">{</span><span class="n">fallback_lambda</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">computed_dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_dof</span><span class="p">(</span><span class="n">fallback_lambda</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resulting degrees of freedom: </span><span class="si">{</span><span class="n">computed_dof</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fallback_lambda</span></div>
+
+
+
+<div class="viewcode-block" id="Spline.fit">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">lambda_reg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dof</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Spline&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit spline using ridge regression.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Y : ndarray of shape (N, D)</span>
+<span class="sd">            Target outputs.</span>
+
+<span class="sd">        lambda_reg : float, optional</span>
+<span class="sd">            Regularization parameter.</span>
+
+<span class="sd">        dof : float, optional</span>
+<span class="sd">            Target effective degrees of freedom.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : Spline</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dof</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">singular_values</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">dof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lambda_reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_lambda_for_dof</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lambda_reg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lambda_reg</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lambda_reg</span><span class="p">)</span>
+
+        <span class="n">kernel_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_matrix</span>                      <span class="c1"># (N, m)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_design</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>       <span class="c1"># (N, p)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">X_design</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">kernel_matrix</span><span class="p">,</span> <span class="n">P</span><span class="p">))</span>      <span class="c1"># (N, m+p)</span>
+
+        <span class="c1"># Ridge block penalizes only radial weights</span>
+        <span class="n">reg_block</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">m</span><span class="p">),</span>
+                               <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">))))</span>
+
+        <span class="n">A_aug</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">X_design</span><span class="p">,</span> <span class="n">reg_block</span><span class="p">))</span>      <span class="c1"># (N+m, m+p)</span>
+        <span class="n">Y_aug</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">Y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="n">D</span><span class="p">))))</span>      <span class="c1"># (N+m, D)</span>
+
+        <span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">A_aug</span><span class="p">,</span> <span class="n">Y_aug</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">radial_coefficients</span> <span class="o">=</span> <span class="n">z</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span>      <span class="c1"># (m, D)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_coefficients</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">m</span><span class="p">:]</span>  <span class="c1"># (p, D)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_dof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+
+<div class="viewcode-block" id="Spline.predict">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.predict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the fitted spline at new input locations.</span>
+
+<span class="sd">        This computes the mapping</span>
+
+<span class="sd">            f(x) = Σ_i w_i φ(||x - c_i||) + P₂(x) a</span>
+
+<span class="sd">        where:</span>
+<span class="sd">            - φ(r) = r⁴ log r</span>
+<span class="sd">            - c_i are control points</span>
+<span class="sd">            - P₂(x) is the quadratic polynomial basis</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X_new : ndarray of shape (M, d) or (d,)</span>
+<span class="sd">            Evaluation points in input space.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray of shape (M, D) or (D,)</span>
+<span class="sd">            Predicted outputs. If a single point is provided,</span>
+<span class="sd">            a 1D array is returned.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Internally computes:</span>
+<span class="sd">            - pairwise distances to control points</span>
+<span class="sd">            - radial basis evaluation</span>
+<span class="sd">            - polynomial tail evaluation</span>
+
+<span class="sd">        The method assumes the spline has been fitted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">was_1d</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">X_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">pairwise_distances</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="n">X_new</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_points</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">)</span>
+        <span class="n">K_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span><span class="p">(</span><span class="n">pairwise_distances</span><span class="p">)</span>           <span class="c1"># (M, m)</span>
+
+        <span class="n">P_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_design</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span>                      <span class="c1"># (M, p)</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">K_new</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">radial_coefficients</span>
+            <span class="o">+</span> <span class="n">P_new</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_coefficients</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">was_1d</span> <span class="k">else</span> <span class="n">predictions</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_poly_derivatives</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute first and second derivatives of the quadratic</span>
+<span class="sd">        polynomial basis P₂(x).</span>
+
+<span class="sd">        The polynomial basis contains all monomials up to degree 2:</span>
+
+<span class="sd">            [1,</span>
+<span class="sd">             x_1, ..., x_d,</span>
+<span class="sd">             x_i x_j for i &lt;= j]</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray of shape (N, d)</span>
+<span class="sd">            Evaluation points.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dPdx : ndarray of shape (N, p, d)</span>
+<span class="sd">            First derivatives of the polynomial basis.</span>
+
+<span class="sd">            dPdx[n, j, i] = ∂P_j / ∂x_i evaluated at X[n].</span>
+
+<span class="sd">        d2P : ndarray of shape (p, d, d)</span>
+<span class="sd">            Second derivatives of the polynomial basis.</span>
+
+<span class="sd">            d2P[j, i, k] = ∂²P_j / ∂x_i ∂x_k</span>
+
+<span class="sd">            These are constant in x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_dof</span><span class="p">()</span>
+
+        <span class="n">dPdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">d2P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># ---------------------</span>
+        <span class="c1"># Constant term (1)</span>
+        <span class="c1"># ---------------------</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># derivative is zero</span>
+
+        <span class="c1"># ---------------------</span>
+        <span class="c1"># Linear terms (x_i)</span>
+        <span class="c1"># ---------------------</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="n">dPdx</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># ---------------------</span>
+        <span class="c1"># Quadratic terms (x_i x_j, i &lt;= j)</span>
+        <span class="c1"># ---------------------</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+                    <span class="c1"># x_i^2</span>
+                    <span class="n">dPdx</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+                    <span class="n">d2P</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># x_i x_j</span>
+                    <span class="n">dPdx</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>
+                    <span class="n">dPdx</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+                    <span class="n">d2P</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+                    <span class="n">d2P</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">dPdx</span><span class="p">,</span> <span class="n">d2P</span>
+
+
+<div class="viewcode-block" id="Spline.compute_jacobians">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.compute_jacobians">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_jacobians</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">evaluation_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute Jacobian matrices of the spline mapping.</span>
+
+<span class="sd">        For φ(r) = r^4 log r, using s = ||x-c||^2:</span>
+
+<span class="sd">            ∇φ = (x - c) * s * (2 log s + 1)</span>
+
+<span class="sd">        with ∇φ(0) = 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray of shape (M, D, d)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">radial_coefficients</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Spline must be fitted before evaluation.&quot;</span><span class="p">)</span>
+
+        <span class="n">Xev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">evaluation_points</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">centers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centers</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radial_coefficients</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_coefficients</span>
+
+        <span class="n">M</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">Xev</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># (M, m, d)</span>
+        <span class="n">diffs</span> <span class="o">=</span> <span class="n">Xev</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">centers</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="c1"># squared radius</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diffs</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># (M, m)</span>
+
+        <span class="n">grad_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">diffs</span><span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">eps</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+            <span class="n">s_masked</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">factor</span> <span class="o">=</span> <span class="n">s_masked</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">s_masked</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+
+            <span class="n">grad_phi</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffs</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="c1"># Radial contribution</span>
+        <span class="n">J_rbf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;mnd,nk-&gt;mkd&quot;</span><span class="p">,</span> <span class="n">grad_phi</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+        <span class="c1"># Polynomial contribution</span>
+        <span class="n">dPdx</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_derivatives</span><span class="p">(</span><span class="n">Xev</span><span class="p">)</span>
+        <span class="n">J_poly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;mpd,pk-&gt;mkd&quot;</span><span class="p">,</span> <span class="n">dPdx</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">J_rbf</span> <span class="o">+</span> <span class="n">J_poly</span></div>
+
+
+
+<div class="viewcode-block" id="Spline.compute_hessians">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.compute_hessians">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_hessians</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">evaluation_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute Hessian matrices of the spline mapping.</span>
+
+<span class="sd">        For φ(r)=r^4 log r, with s = ||x-c||^2 and d = x-c:</span>
+
+<span class="sd">            ∇²φ = 2(2 log s + 3) ddᵀ + s(2 log s + 1) I</span>
+
+<span class="sd">        with ∇²φ(0)=0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray of shape (M, D, d, d)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">radial_coefficients</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_coefficients</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Spline must be fitted before evaluation.&quot;</span><span class="p">)</span>
+
+        <span class="n">Xev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">evaluation_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">centers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centers</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radial_coefficients</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_coefficients</span>
+
+        <span class="n">M</span><span class="p">,</span> <span class="n">d_dim</span> <span class="o">=</span> <span class="n">Xev</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">centers</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># diffs: (M, m, d)</span>
+        <span class="n">diffs</span> <span class="o">=</span> <span class="n">Xev</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">centers</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="c1"># s = ||diffs||^2: (M, m)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diffs</span> <span class="o">*</span> <span class="n">diffs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># outer products dd^T: (M, m, d, d)</span>
+        <span class="n">outer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;mni,mnj-&gt;mnij&quot;</span><span class="p">,</span> <span class="n">diffs</span><span class="p">,</span> <span class="n">diffs</span><span class="p">)</span>
+
+        <span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># (1,1,d,d)</span>
+
+        <span class="c1"># factors, default 0 (enforces H=0 at/near s=0)</span>
+        <span class="n">factor_dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">factor_I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">eps</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+            <span class="n">s_m</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">log_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">s_m</span><span class="p">)</span>
+
+            <span class="c1"># 2(2 log s + 3) and s(2 log s + 1)</span>
+            <span class="n">factor_dd</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_s</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span>
+            <span class="n">factor_I</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_m</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_s</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="c1"># H_individual: (M, m, d, d)</span>
+        <span class="n">H_individual</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">factor_dd</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">outer</span>
+            <span class="o">+</span> <span class="n">factor_I</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">I</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Sum over centers with radial coefficients alpha: (M, D, d, d)</span>
+        <span class="n">H_rbf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;mnij,nk-&gt;mkij&quot;</span><span class="p">,</span> <span class="n">H_individual</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+        <span class="c1"># Polynomial Hessian contribution (constant in x for degree-2 terms)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">d2P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_derivatives</span><span class="p">(</span><span class="n">Xev</span><span class="p">)</span>          <span class="c1"># (p, d, d)</span>
+        <span class="n">H_poly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;pij,pk-&gt;kij&quot;</span><span class="p">,</span> <span class="n">d2P</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>  <span class="c1"># (D, d, d)</span>
+        <span class="n">H_poly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">H_poly</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">H_poly</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">d_dim</span><span class="p">,</span> <span class="n">d_dim</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">H_rbf</span> <span class="o">+</span> <span class="n">H_poly</span></div>
+
+
+
+<div class="viewcode-block" id="Spline.compute_metric">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.compute_metric">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_metric</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">evaluation_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute induced Riemannian metric tensor.</span>
+
+<span class="sd">        Given Jacobians J(x), the metric is:</span>
+
+<span class="sd">            g_ij = ⟨∂f/∂x_i , ∂f/∂x_j⟩</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        evaluation_points : ndarray of shape (M, d)</span>
+
+<span class="sd">        eps : float, optional</span>
+<span class="sd">            Numerical stability parameter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray of shape (M, d, d)</span>
+<span class="sd">            Metric tensor at each evaluation point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">jacobians</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_jacobians</span><span class="p">(</span><span class="n">evaluation_points</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mki,mkj-&gt;mij&#39;</span><span class="p">,</span> <span class="n">jacobians</span><span class="p">,</span> <span class="n">jacobians</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">metrics</span></div>
+
+
+
+<div class="viewcode-block" id="Spline.compute_christoffels">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.compute_christoffels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_christoffels</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">evaluation_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute Christoffel symbols of the induced connection.</span>
+
+<span class="sd">        Using:</span>
+
+<span class="sd">            Γ^k_{ij} = g^{km} ⟨∂²f/∂x_i∂x_j , ∂f/∂x_m⟩</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        evaluation_points : ndarray of shape (M, d)</span>
+
+<span class="sd">        eps : float, optional</span>
+<span class="sd">            Numerical stability parameter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray of shape (M, d, d, d)</span>
+<span class="sd">            Christoffel symbols Γ^k_{ij} at each point.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        These define the Levi-Civita connection</span>
+<span class="sd">        induced by the embedding f.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_jacobians</span><span class="p">(</span><span class="n">evaluation_points</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>   <span class="c1"># (M, out_dim, d)</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_hessians</span><span class="p">(</span><span class="n">evaluation_points</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>    <span class="c1"># (M, out_dim, d, d)</span>
+
+        <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mki,mkj-&gt;mij&#39;</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>                      <span class="c1"># (M, d, d)  (here d is intrinsic dim)</span>
+        <span class="n">g_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+        <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mkij,mkl-&gt;mijl&#39;</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>                    <span class="c1"># (M, d, d, d)</span>
+        <span class="n">Gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mkm,mijm-&gt;mijk&#39;</span><span class="p">,</span> <span class="n">g_inv</span><span class="p">,</span> <span class="n">S</span><span class="p">)</span>            <span class="c1"># (M, d, d, d)</span>
+        <span class="k">return</span> <span class="n">Gamma</span></div>
+
+
+
+<div class="viewcode-block" id="Spline.compute_torsion">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.compute_torsion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_torsion</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">evaluation_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute torsion tensor.</span>
+
+<span class="sd">            T^k_{ij} = Γ^k_{ij} − Γ^k_{ji}</span>
+
+<span class="sd">        For a Levi-Civita connection,</span>
+<span class="sd">        torsion should vanish.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        evaluation_points : ndarray of shape (M, d)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray of shape (M, d, d, d)</span>
+<span class="sd">            Torsion tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">Gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_christoffels</span><span class="p">(</span><span class="n">evaluation_points</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">Gamma</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">Gamma</span><span class="p">,</span> <span class="n">axis1</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="Spline.curvature">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.curvature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">curvature</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">evaluation_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute extrinsic and intrinsic curvature quantities.</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        - Second fundamental form projections</span>
+<span class="sd">        - Riemann curvature tensor</span>
+<span class="sd">        - Ricci tensor</span>
+<span class="sd">        - Scalar curvature</span>
+<span class="sd">        - Normal basis vectors</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        evaluation_points : ndarray of shape (M, d)</span>
+
+<span class="sd">        eps : float, optional</span>
+<span class="sd">            Numerical stability parameter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        K : ndarray</span>
+<span class="sd">            Second fundamental form components.</span>
+
+<span class="sd">        Riem : ndarray</span>
+<span class="sd">            Riemann curvature tensor.</span>
+
+<span class="sd">        Ric : ndarray</span>
+<span class="sd">            Ricci curvature tensor.</span>
+
+<span class="sd">        Rsc : ndarray</span>
+<span class="sd">            Scalar curvature.</span>
+
+<span class="sd">        Nmat : ndarray</span>
+<span class="sd">            Orthonormal normal basis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_jacobians</span><span class="p">(</span><span class="n">evaluation_points</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>   <span class="c1"># (M, D, 2) in your use</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_hessians</span><span class="p">(</span><span class="n">evaluation_points</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+
+        <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mki,mkj-&gt;mij&#39;</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+        <span class="n">g_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+        <span class="n">D</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">Nmat</span> <span class="o">=</span> <span class="n">U</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">:]</span>
+
+        <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mdij,mdA-&gt;mAij&#39;</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">Nmat</span><span class="p">)</span>
+
+        <span class="n">h1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mAik,mAjl-&gt;mAijkl&#39;</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+        <span class="n">h2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mAil,mAjk-&gt;mAijkl&#39;</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+        <span class="n">Riem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">h1</span> <span class="o">-</span> <span class="n">h2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">Ric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mik,mijkl-&gt;mjl&#39;</span><span class="p">,</span> <span class="n">g_inv</span><span class="p">,</span> <span class="n">Riem</span><span class="p">)</span>
+        <span class="n">Rsc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;mjl,mjl-&gt;m&#39;</span><span class="p">,</span> <span class="n">g_inv</span><span class="p">,</span> <span class="n">Ric</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">K</span><span class="p">,</span> <span class="n">Riem</span><span class="p">,</span> <span class="n">Ric</span><span class="p">,</span> <span class="n">Rsc</span><span class="p">,</span> <span class="n">Nmat</span></div>
+
+
+
+<div class="viewcode-block" id="Spline.map_velocities">
+<a class="viewcode-back" href="../../../flowmap.html#flowmap.Spline.map_velocities">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">map_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">V</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Project velocity vectors through the spline tangent.</span>
+
+<span class="sd">        Given velocities V in output space, this computes</span>
+<span class="sd">        their representation in input coordinates using:</span>
+
+<span class="sd">            J(x) v_input ≈ v_output</span>
+
+<span class="sd">        via least squares.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        V : ndarray of shape (N, D)</span>
+<span class="sd">            Velocity vectors in embedding space.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray of shape (N, d)</span>
+<span class="sd">            Mapped velocities in input coordinates.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This implements a local pseudo-inverse of the Jacobian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">jacobians</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_jacobians</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">mapped_velocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">mapped_velocities</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">jacobians</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mapped_velocities</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

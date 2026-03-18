@@ -1,0 +1,1009 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlowMap &mdash; FlowMap 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="flowmap" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FlowMap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">flowmap</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">FlowMap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-flowmap">Core API</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.Spline"><code class="docutils literal notranslate"><span class="pre">Spline</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.VectorFieldEmbedder"><code class="docutils literal notranslate"><span class="pre">VectorFieldEmbedder</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-flowmap.geometry">Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.geometry.FixedPointAnalyzer"><code class="docutils literal notranslate"><span class="pre">FixedPointAnalyzer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.geometry.GeneGradientAnalyzer"><code class="docutils literal notranslate"><span class="pre">GeneGradientAnalyzer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.geometry.LagrangianPathOptimizer"><code class="docutils literal notranslate"><span class="pre">LagrangianPathOptimizer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-flowmap.evaluation">Evaluation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.evaluation.SplineFitEvaluator"><code class="docutils literal notranslate"><span class="pre">SplineFitEvaluator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-flowmap.plot">Plotting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.plot.plot_2d_quiver"><code class="docutils literal notranslate"><span class="pre">plot_2d_quiver()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.plot.plot_3d_quiver"><code class="docutils literal notranslate"><span class="pre">plot_3d_quiver()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.plot.plot_3d_scatter"><code class="docutils literal notranslate"><span class="pre">plot_3d_scatter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.plot.plot_velocity_grid"><code class="docutils literal notranslate"><span class="pre">plot_velocity_grid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.plot.plot_velocity_stream"><code class="docutils literal notranslate"><span class="pre">plot_velocity_stream()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-flowmap.utils">Utilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flowmap.utils.compute_velocity_on_grid"><code class="docutils literal notranslate"><span class="pre">compute_velocity_on_grid()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FlowMap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">flowmap</a></li>
+      <li class="breadcrumb-item active">FlowMap</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/flowmap.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="flowmap">
+<h1>FlowMap<a class="headerlink" href="#flowmap" title="Link to this heading"></a></h1>
+<p>Geometry-aware vector field embeddings for RNA velocity and dynamical analysis.</p>
+<section id="module-flowmap">
+<span id="core-api"></span><h2>Core API<a class="headerlink" href="#module-flowmap" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.Spline">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.</span></span><span class="sig-name descname"><span class="pre">Spline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_control_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Polyharmonic spline regression model (2D triharmonic spline).</p>
+<p>This model represents a smooth mapping</p>
+<blockquote>
+<div><p>f : ℝᵈ → ℝᴰ</p>
+</div></blockquote>
+<p>of the form:</p>
+<blockquote>
+<div><p>f(x) = Σᵢ wᵢ φ(||x - cᵢ||) + P₂(x) a</p>
+</div></blockquote>
+<p>where:</p>
+<ul class="simple">
+<li><p>φ(r) = r⁴ log r  (polyharmonic kernel of order m=3 in 2D)</p></li>
+<li><p>cᵢ are control points</p></li>
+<li><p>wᵢ are radial weights</p></li>
+<li><p>P₂(x) contains all monomials up to degree 2</p></li>
+<li><p>a are polynomial coefficients</p></li>
+</ul>
+<p>The radial weights are ridge-regularized.</p>
+<p>This spline is C² smooth and suitable for:</p>
+<ul class="simple">
+<li><p>Jacobian computation</p></li>
+<li><p>Hessian computation</p></li>
+<li><p>Riemannian metric construction</p></li>
+<li><p>Curvature and torsion analysis</p></li>
+<li><p>Velocity pushforwards</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>N</em><em>, </em><em>d</em><em>)</em>) – Input training points.</p></li>
+<li><p><strong>n_control_points</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default=1000</em><em>)</em>) – Number of control points. If larger than N,
+all points are used.</p></li>
+<li><p><strong>max_n</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default=4000</em><em>)</em>) – Warning threshold for large datasets.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For polyharmonic splines of order m=3 in 2D,
+the polynomial tail must have degree m-1 = 2.</p>
+<p class="rubric">References</p>
+<p>Duchon (1977), Splines minimizing rotation-invariant seminorms.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.compute_christoffels">
+<span class="sig-name descname"><span class="pre">compute_christoffels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evaluation_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.compute_christoffels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.compute_christoffels" title="Link to this definition"></a></dt>
+<dd><p>Compute Christoffel symbols of the induced connection.</p>
+<p>Using:</p>
+<blockquote>
+<div><p>Γ^k_{ij} = g^{km} ⟨∂²f/∂x_i∂x_j , ∂f/∂x_m⟩</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evaluation_points</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>d</em><em>)</em>)</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Numerical stability parameter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Christoffel symbols Γ^k_{ij} at each point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of shape (M, d, d, d)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>These define the Levi-Civita connection
+induced by the embedding f.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.compute_dof">
+<span class="sig-name descname"><span class="pre">compute_dof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lambda_reg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.compute_dof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.compute_dof" title="Link to this definition"></a></dt>
+<dd><p>Compute effective degrees of freedom (DoF) of the spline model.</p>
+<p>The radial contribution is computed from the singular values
+of the kernel matrix Φ:</p>
+<blockquote>
+<div><p>dof_radial = Σ_i s_i² / (s_i² + λ)</p>
+</div></blockquote>
+<p>where s_i are singular values of Φ.</p>
+<p>The polynomial contribution equals the number of polynomial
+basis functions (degree 2):</p>
+<blockquote>
+<div><p>dof_poly = C(d+2, 2)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lambda_reg</strong> (<em>float</em>) – Ridge regularization parameter λ.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Effective degrees of freedom.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This corresponds to the trace of the smoothing matrix
+for ridge-regularized RBF regression.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.compute_hessians">
+<span class="sig-name descname"><span class="pre">compute_hessians</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evaluation_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.compute_hessians"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.compute_hessians" title="Link to this definition"></a></dt>
+<dd><p>Compute Hessian matrices of the spline mapping.</p>
+<p>For φ(r)=r^4 log r, with s = ||x-c||^2 and d = x-c:</p>
+<blockquote>
+<div><p>∇²φ = 2(2 log s + 3) ddᵀ + s(2 log s + 1) I</p>
+</div></blockquote>
+<p>with ∇²φ(0)=0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of shape (M, D, d, d)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.compute_jacobians">
+<span class="sig-name descname"><span class="pre">compute_jacobians</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evaluation_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.compute_jacobians"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.compute_jacobians" title="Link to this definition"></a></dt>
+<dd><p>Compute Jacobian matrices of the spline mapping.</p>
+<p>For φ(r) = r^4 log r, using s = ||x-c||^2:</p>
+<blockquote>
+<div><p>∇φ = (x - c) * s * (2 log s + 1)</p>
+</div></blockquote>
+<p>with ∇φ(0) = 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of shape (M, D, d)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.compute_metric">
+<span class="sig-name descname"><span class="pre">compute_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evaluation_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.compute_metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.compute_metric" title="Link to this definition"></a></dt>
+<dd><p>Compute induced Riemannian metric tensor.</p>
+<p>Given Jacobians J(x), the metric is:</p>
+<blockquote>
+<div><p>g_ij = ⟨∂f/∂x_i , ∂f/∂x_j⟩</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evaluation_points</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>d</em><em>)</em>)</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Numerical stability parameter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Metric tensor at each evaluation point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of shape (M, d, d)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.compute_torsion">
+<span class="sig-name descname"><span class="pre">compute_torsion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evaluation_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.compute_torsion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.compute_torsion" title="Link to this definition"></a></dt>
+<dd><p>Compute torsion tensor.</p>
+<blockquote>
+<div><p>T^k_{ij} = Γ^k_{ij} − Γ^k_{ji}</p>
+</div></blockquote>
+<p>For a Levi-Civita connection,
+torsion should vanish.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>evaluation_points</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>d</em><em>)</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Torsion tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of shape (M, d, d, d)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.curvature">
+<span class="sig-name descname"><span class="pre">curvature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evaluation_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.curvature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.curvature" title="Link to this definition"></a></dt>
+<dd><p>Compute extrinsic and intrinsic curvature quantities.</p>
+<p>Returns:</p>
+<ul class="simple">
+<li><p>Second fundamental form projections</p></li>
+<li><p>Riemann curvature tensor</p></li>
+<li><p>Ricci tensor</p></li>
+<li><p>Scalar curvature</p></li>
+<li><p>Normal basis vectors</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evaluation_points</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>d</em><em>)</em>)</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Numerical stability parameter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>K</strong> (<em>ndarray</em>) – Second fundamental form components.</p></li>
+<li><p><strong>Riem</strong> (<em>ndarray</em>) – Riemann curvature tensor.</p></li>
+<li><p><strong>Ric</strong> (<em>ndarray</em>) – Ricci curvature tensor.</p></li>
+<li><p><strong>Rsc</strong> (<em>ndarray</em>) – Scalar curvature.</p></li>
+<li><p><strong>Nmat</strong> (<em>ndarray</em>) – Orthonormal normal basis.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.find_lambda_for_dof">
+<span class="sig-name descname"><span class="pre">find_lambda_for_dof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.find_lambda_for_dof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.find_lambda_for_dof" title="Link to this definition"></a></dt>
+<dd><p>Finds the regularization parameter (lambda_reg) that achieves a target degrees
+of freedom using a numerical root solver. Falls back to a fixed lambda if search fails.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_reg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#flowmap.Spline" title="flowmap.core.spline.Spline"><span class="pre">Spline</span></a></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.fit" title="Link to this definition"></a></dt>
+<dd><p>Fit spline using ridge regression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Y</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>N</em><em>, </em><em>D</em><em>)</em>) – Target outputs.</p></li>
+<li><p><strong>lambda_reg</strong> (<em>float</em><em>, </em><em>optional</em>) – Regularization parameter.</p></li>
+<li><p><strong>dof</strong> (<em>float</em><em>, </em><em>optional</em>) – Target effective degrees of freedom.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#flowmap.Spline" title="flowmap.Spline">Spline</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.map_velocities">
+<span class="sig-name descname"><span class="pre">map_velocities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.map_velocities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.map_velocities" title="Link to this definition"></a></dt>
+<dd><p>Project velocity vectors through the spline tangent.</p>
+<p>Given velocities V in output space, this computes
+their representation in input coordinates using:</p>
+<blockquote>
+<div><p>J(x) v_input ≈ v_output</p>
+</div></blockquote>
+<p>via least squares.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>V</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>N</em><em>, </em><em>D</em><em>)</em>) – Velocity vectors in embedding space.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mapped velocities in input coordinates.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of shape (N, d)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This implements a local pseudo-inverse of the Jacobian.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.Spline.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_new</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/core/spline.html#Spline.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.Spline.predict" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the fitted spline at new input locations.</p>
+<p>This computes the mapping</p>
+<blockquote>
+<div><p>f(x) = Σ_i w_i φ(||x - c_i||) + P₂(x) a</p>
+</div></blockquote>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p>φ(r) = r⁴ log r</p></li>
+<li><p>c_i are control points</p></li>
+<li><p>P₂(x) is the quadratic polynomial basis</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X_new</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>d</em><em>) or </em><em>(</em><em>d</em><em>,</em><em>)</em>) – Evaluation points in input space.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Predicted outputs. If a single point is provided,
+a 1D array is returned.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of shape (M, D) or (D,)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>Internally computes:</dt><dd><ul class="simple">
+<li><p>pairwise distances to control points</p></li>
+<li><p>radial basis evaluation</p></li>
+<li><p>polynomial tail evaluation</p></li>
+</ul>
+</dd>
+</dl>
+<p>The method assumes the spline has been fitted.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.VectorFieldEmbedder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.</span></span><span class="sig-name descname"><span class="pre">VectorFieldEmbedder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'umap'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dof_vf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'phase'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_dist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_emb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_vf_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knn_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_PCA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pca_components</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_spline_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/flowmap_embedding.html#VectorFieldEmbedder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.VectorFieldEmbedder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Geometry-aware embedding for vector field data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>ndarray</em><em> (</em><em>N</em><em>, </em><em>d</em><em>)</em>) – High-dimensional data.</p></li>
+<li><p><strong>V</strong> (<em>ndarray</em><em> (</em><em>N</em><em>, </em><em>d</em><em>)</em>) – Vector field in input space.</p></li>
+<li><p><strong>method</strong> (<em>{&quot;umap&quot;</em><em>, </em><em>&quot;tsne&quot;</em><em>, </em><em>&quot;pca&quot;}</em>) – Embedding method.</p></li>
+<li><p><strong>dist_method</strong> (<em>{&quot;phase&quot;</em><em>, </em><em>&quot;euclidean&quot;}</em>) – Distance computation method.</p></li>
+<li><p><strong>dof</strong> (<em>float</em>) – Degrees of freedom for geometry spline.</p></li>
+<li><p><strong>dof_vf</strong> (<em>float</em>) – Degrees of freedom for vector-field spline.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The pipeline:</p>
+<blockquote>
+<div><p>X  –(embedding)–&gt;  X_emb
+X_emb –(Spline)–&gt; X
+X –(pushforward)–&gt; V_emb</p>
+</div></blockquote>
+<p>Two splines are fitted:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Geometry spline  : embedding → input space</p></li>
+<li><p>Velocity spline  : embedding → embedded vector field</p></li>
+</ol>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.VectorFieldEmbedder.fit_embedding">
+<span class="sig-name descname"><span class="pre">fit_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/flowmap/flowmap_embedding.html#VectorFieldEmbedder.fit_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.VectorFieldEmbedder.fit_embedding" title="Link to this definition"></a></dt>
+<dd><p>Compute the initial embedding and fit geometry-aware splines.</p>
+<p>This method performs:</p>
+<ol class="arabic simple">
+<li><p>Distance graph computation (if using phase distance)</p></li>
+<li><p>Low-dimensional embedding (e.g. UMAP / t-SNE / PCA)</p></li>
+<li><dl class="simple">
+<dt>Spline fitting:</dt><dd><ul class="simple">
+<li><p>spline : Spline</p></li>
+<li><p>spline_vf : Spline</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random seed for reproducibility.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>After calling this method, the following attributes are available:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>X_emb<span class="classifier">ndarray (N, embedding_dim)</span></dt><dd><p>Embedded coordinates.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>V_emb<span class="classifier">ndarray (N, embedding_dim)</span></dt><dd><p>Embedded vector field.</p>
+</dd>
+</dl>
+</li>
+<li><p>spline : Spline</p></li>
+<li><p>spline_vf : Spline</p></li>
+</ul>
+<p>This method must be called before <cite>refine_embedding()</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.VectorFieldEmbedder.fit_gene_level_splines">
+<span class="sig-name descname"><span class="pre">fit_gene_level_splines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dof_gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dof_vf_gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/flowmap/flowmap_embedding.html#VectorFieldEmbedder.fit_gene_level_splines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.VectorFieldEmbedder.fit_gene_level_splines" title="Link to this definition"></a></dt>
+<dd><p>Fit gene-level splines for expression and velocity fields.</p>
+<p>This method constructs separate splines mapping:</p>
+<blockquote>
+<div><p>embedding → gene expression
+embedding → gene-level velocity</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dof_gene</strong> (<em>float</em><em>, </em><em>default=30</em>) – Degrees of freedom for gene-expression spline.</p></li>
+<li><p><strong>dof_vf_gene</strong> (<em>float</em><em>, </em><em>default=30</em>) – Degrees of freedom for gene-velocity spline.</p></li>
+<li><p><strong>X</strong> (<em>ndarray</em><em> (</em><em>N</em><em>, </em><em>p</em><em>)</em><em>, </em><em>optional</em>) – Gene expression matrix. If None, uses raw input data.</p></li>
+<li><p><strong>V</strong> (<em>ndarray</em><em> (</em><em>N</em><em>, </em><em>p</em><em>)</em><em>, </em><em>optional</em>) – Gene velocity matrix. If None, uses raw input velocities.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Three cases:</p>
+<ol class="arabic simple">
+<li><p>Custom gene matrices provided → fit new splines.</p></li>
+<li><p>No custom input → use raw high-dimensional data.</p></li>
+<li><p>If no gene refitting is desired, splines are reused.</p></li>
+</ol>
+<p>After fitting, the following attributes are set:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>spline_gene</p></li>
+<li><p>spline_vf_gene</p></li>
+<li><p>X_gene</p></li>
+<li><p>V_gene</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.VectorFieldEmbedder.refine_embedding">
+<span class="sig-name descname"><span class="pre">refine_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/flowmap/flowmap_embedding.html#VectorFieldEmbedder.refine_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.VectorFieldEmbedder.refine_embedding" title="Link to this definition"></a></dt>
+<dd><p>Refine the embedding using geometry-aware optimization.</p>
+<p>This is an optional iterative refinement step that adjusts
+embedding coordinates to improve geometric consistency between:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>the spline reconstruction</p></li>
+<li><p>the vector field alignment</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lam</strong> (<em>float</em><em>, </em><em>optional</em>) – Regularization weight controlling refinement strength.</p></li>
+<li><p><strong>method</strong> (<em>{&quot;batch&quot;</em><em>, </em><em>&quot;global&quot;}</em>) – <dl class="simple">
+<dt>Optimization strategy:</dt><dd><ul>
+<li><p>”batch”  : stochastic mini-batch refinement (SGD)</p></li>
+<li><p>”global” : full-batch optimization</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Mini-batch size (for batch mode).</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – Learning rate (batch mode).</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – Number of optimization epochs (batch mode).</p></li>
+<li><p><strong>tol</strong> (<em>float</em>) – Tolerance for convergence (global mode).</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Whether to print optimization progress.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method:</p>
+<ol class="arabic simple">
+<li><p>Updates X_emb</p></li>
+<li><p>Re-fits geometry and velocity splines</p></li>
+<li><p>Updates V_emb accordingly</p></li>
+</ol>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-flowmap.geometry">
+<span id="geometry"></span><h2>Geometry<a class="headerlink" href="#module-flowmap.geometry" title="Link to this heading"></a></h2>
+<p>Geometry submodule.</p>
+<p>Provides differential geometric analysis tools for
+vector-field embeddings.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.geometry.FixedPointAnalyzer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.geometry.</span></span><span class="sig-name descname"><span class="pre">FixedPointAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.FixedPointAnalyzer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fixed-point detection and classification for smooth vector fields
+defined on a FlowMap embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>embedding</strong> (<a class="reference internal" href="#flowmap.VectorFieldEmbedder" title="flowmap.VectorFieldEmbedder"><em>VectorFieldEmbedder</em></a>) – <p>Must expose:</p>
+<ul class="simple">
+<li><p>X_emb : ndarray (N, d)</p></li>
+<li><p>V_emb : ndarray (N, d)</p></li>
+<li><p>spline : Spline</p></li>
+<li><p>spline_vf : Spline</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.FixedPointAnalyzer.classify_fixed_point">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">classify_fixed_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer.classify_fixed_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.FixedPointAnalyzer.classify_fixed_point" title="Link to this definition"></a></dt>
+<dd><p>Classify a fixed point using linear stability analysis of its Jacobian.</p>
+<p>The classification is determined from the eigenvalue spectrum
+of the Jacobian matrix evaluated at the fixed point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>d</em><em>, </em><em>d</em><em>)</em>) – Jacobian matrix of the vector field at the fixed point.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>default=1e-4</em>) – Numerical tolerance used to determine whether eigenvalues
+are considered zero or have non-negligible imaginary parts.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>One of:</p>
+<ul class="simple">
+<li><p>”Stable node (sink)”</p></li>
+<li><p>”Unstable node (source)”</p></li>
+<li><p>”Saddle”</p></li>
+<li><p>”Degenerate”</p></li>
+<li><p>”Center”</p></li>
+<li><p>”Spiral in”</p></li>
+<li><p>”Spiral out”</p></li>
+<li><p>”Mixed focus”</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Let <span class="math notranslate nohighlight">\(\lambda_i \in \mathbb{C}\)</span> denote the eigenvalues of <code class="docutils literal notranslate"><span class="pre">J</span></code>.</p>
+<ul class="simple">
+<li><p>Stability is determined by the sign of <span class="math notranslate nohighlight">\(\Re(\lambda_i)\)</span>.</p></li>
+<li><p>Purely real spectra correspond to node or saddle behavior.</p></li>
+<li><p>Complex conjugate pairs indicate rotational (spiral or center) dynamics.</p></li>
+<li><dl class="simple">
+<dt>A fixed point is:</dt><dd><ul>
+<li><p>Stable if all <span class="math notranslate nohighlight">\(\Re(\lambda_i) &lt; 0\)</span></p></li>
+<li><p>Unstable if all <span class="math notranslate nohighlight">\(\Re(\lambda_i) &gt; 0\)</span></p></li>
+<li><p>A saddle if signs are mixed</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>This classification corresponds to the local linearization of the
+dynamical system near the fixed point.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.FixedPointAnalyzer.identify_fixed_points">
+<span class="sig-name descname"><span class="pre">identify_fixed_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed_smooth_sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_speed_quantile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer.identify_fixed_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.FixedPointAnalyzer.identify_fixed_points" title="Link to this definition"></a></dt>
+<dd><p>Identify and classify fixed points from grid-sampled velocities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xg</strong> (<em>ndarray</em><em> (</em><em>Ng</em><em>, </em><em>d</em><em>)</em>) – Grid coordinates.</p></li>
+<li><p><strong>Vg</strong> (<em>ndarray</em><em> (</em><em>Ng</em><em>, </em><em>d</em><em>)</em>) – Velocity evaluated on grid.</p></li>
+<li><p><strong>grid_shape</strong> (<em>tuple</em>) – Shape of grid used for reshaping.</p></li>
+<li><p><strong>speed_smooth_sigma</strong> (<em>float</em>) – Gaussian smoothing bandwidth.</p></li>
+<li><p><strong>global_speed_quantile</strong> (<em>float</em>) – Global speed threshold for filtering.</p></li>
+<li><p><strong>radius_percent</strong> (<em>float</em>) – Neighborhood radius relative to embedding scale.</p></li>
+<li><p><strong>weighted</strong> (<em>bool</em>) – Whether to use weighted Jacobian fitting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Each dict contains:</p>
+<ul class="simple">
+<li><p>position : ndarray (d,)</p></li>
+<li><p>jacobian : ndarray (d, d)</p></li>
+<li><p>type : str</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.geometry.GeneGradientAnalyzer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.geometry.</span></span><span class="sig-name descname"><span class="pre">GeneGradientAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.GeneGradientAnalyzer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Analyze gene-level gradients in embedding space.</p>
+<p>This class evaluates the geometry of gene-expression gradients
+reconstructed via the gene-level spline.</p>
+<p>For each cell, the spline Jacobian provides:</p>
+<blockquote>
+<div><p>J(z) = ∂X_gene / ∂z</p>
+</div></blockquote>
+<p>Combined with the pullback metric, this allows computing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Riemannian gradients</p></li>
+<li><p>Alignment with local velocity</p></li>
+<li><p>Parallel / orthogonal components</p></li>
+</ul>
+</div></blockquote>
+<p>No plotting is performed here. Visualization should be handled
+in the plotting module.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.GeneGradientAnalyzer.compute_relative_gradients">
+<span class="sig-name descname"><span class="pre">compute_relative_gradients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'magnitude'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer.compute_relative_gradients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.GeneGradientAnalyzer.compute_relative_gradients" title="Link to this definition"></a></dt>
+<dd><p>Compute relative orientation of gene gradients to velocity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>neighbor_indices</strong> (<em>ndarray</em>) – Cells near region of interest.</p></li>
+<li><p><strong>gene_indices</strong> (<em>ndarray</em>) – Genes to analyze.</p></li>
+<li><p><strong>weight</strong> (<em>{&quot;magnitude&quot;</em><em>, </em><em>&quot;uniform&quot;}</em><em>, </em><em>default=&quot;magnitude&quot;</em>) – Weighting scheme for averaging across cells.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Contains:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>angles<span class="classifier">ndarray</span></dt><dd><p>Mean angle (radians) relative to velocity direction.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>magnitudes<span class="classifier">ndarray</span></dt><dd><p>Mean projected gradient magnitude.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.GeneGradientAnalyzer.find_neighbors">
+<span class="sig-name descname"><span class="pre">find_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer.find_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.GeneGradientAnalyzer.find_neighbors" title="Link to this definition"></a></dt>
+<dd><p>Find cells near a trajectory in embedding space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trajectory</strong> (<em>ndarray</em><em> (</em><em>m</em><em>, </em><em>d</em><em>)</em>) – Path in embedding space.</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em><em>, </em><em>default=0.05</em>) – Relative neighborhood radius (fraction of embedding scale).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Indices of neighboring cells.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.geometry.LagrangianPathOptimizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.geometry.</span></span><span class="sig-name descname"><span class="pre">LagrangianPathOptimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/geometry/least_action_path.html#LagrangianPathOptimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.LagrangianPathOptimizer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Minimum-action path computation for FlowMap embeddings.</p>
+<p>This class computes transition trajectories under the action:</p>
+<div class="math notranslate nohighlight">
+\[S[x] = \frac{1}{2D} \int ||\dot{x} - v(x)||^2 dt
+       + \lambda \int ||\dot{x}||^2 dt\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p>v(x) is the embedded vector field</p></li>
+<li><p>D is the diffusion constant</p></li>
+<li><p>λ is an arc-length regularization weight</p></li>
+</ul>
+<p>The optimizer:</p>
+<ol class="arabic simple">
+<li><p>Initializes a path via Dijkstra on a kNN graph</p></li>
+<li><p>Refines the path by gradient descent on the action functional</p></li>
+</ol>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.LagrangianPathOptimizer.fit_path">
+<span class="sig-name descname"><span class="pre">fit_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'embed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_segments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/flowmap/geometry/least_action_path.html#LagrangianPathOptimizer.fit_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.LagrangianPathOptimizer.fit_path" title="Link to this definition"></a></dt>
+<dd><p>Compute minimum-action transition path between two states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>ndarray</em><em> (</em><em>d</em><em>,</em><em>)</em>) – Starting coordinate.</p></li>
+<li><p><strong>end</strong> (<em>ndarray</em><em> (</em><em>d</em><em>,</em><em>)</em>) – Ending coordinate.</p></li>
+<li><p><strong>distance_mode</strong> (<em>{&quot;embed&quot;</em><em>, </em><em>&quot;orig&quot;}</em>) – Graph geometry for initialization.</p></li>
+<li><p><strong>subsample_n</strong> (<em>int</em>) – Number of points used for graph.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Number of nearest neighbors.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Velocity-alignment weight.</p></li>
+<li><p><strong>n_segments</strong> (<em>int</em>) – Number of discretization segments.</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – Gradient descent learning rate.</p></li>
+<li><p><strong>iters</strong> (<em>int</em>) – Number of refinement iterations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>path_init</p></li>
+<li><p>path_refined</p></li>
+<li><p>dt</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict with keys</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-flowmap.evaluation">
+<span id="evaluation"></span><h2>Evaluation<a class="headerlink" href="#module-flowmap.evaluation" title="Link to this heading"></a></h2>
+<p>Evaluation submodule.</p>
+<p>Spline reconstruction accuracy and statistical testing.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.evaluation.SplineFitEvaluator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.evaluation.</span></span><span class="sig-name descname"><span class="pre">SplineFitEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/evaluation/spline_fit_evaluator.html#SplineFitEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.evaluation.SplineFitEvaluator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Evaluate reconstruction accuracy of manifold and velocity splines.</p>
+<p>This class quantifies how well a fitted spline model reconstructs:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Feature values (e.g. genes or principal components)</p></li>
+<li><p>Vector field values</p></li>
+</ol>
+</div></blockquote>
+<p>It supports evaluation at two levels:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Gene-level splines (<code class="docutils literal notranslate"><span class="pre">spline_gene</span></code>, <code class="docutils literal notranslate"><span class="pre">spline_vf_gene</span></code>)</p></li>
+<li><p>Embedding-level splines (<code class="docutils literal notranslate"><span class="pre">spline</span></code>, <code class="docutils literal notranslate"><span class="pre">spline_vf</span></code>)</p></li>
+</ul>
+</div></blockquote>
+<p>If <code class="docutils literal notranslate"><span class="pre">mode</span></code> is not specified, gene-level splines are used when
+available; otherwise embedding-level splines are evaluated.</p>
+<p class="rubric">Notes</p>
+<p>Let <span class="math notranslate nohighlight">\(f(z)\)</span> denote the spline mapping from embedding
+coordinates <span class="math notranslate nohighlight">\(z\)</span> to feature space, and let
+<span class="math notranslate nohighlight">\(J(z) = \nabla f(z)\)</span> denote its Jacobian.</p>
+<p>Expression reconstruction is evaluated via:</p>
+<div class="math notranslate nohighlight">
+\[R^2 = 1 - \frac{\|X - \hat{X}\|^2}{\|X - \bar{X}\|^2}\]</div>
+<p>Velocity reconstruction is evaluated using the local linear
+pushforward:</p>
+<div class="math notranslate nohighlight">
+\[\hat{V} = J(z) \beta,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta\)</span> is obtained by least-squares fitting to
+the observed velocity.</p>
+<p>This provides both global and per-feature metrics.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.evaluation.SplineFitEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/flowmap/evaluation/spline_fit_evaluator.html#SplineFitEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.evaluation.SplineFitEvaluator.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Compute reconstruction metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>Dictionary containing:</p>
+<dl class="simple">
+<dt>expr_r2<span class="classifier">float</span></dt><dd><p>Mean expression R² across features.</p>
+</dd>
+<dt>vel_r2<span class="classifier">float</span></dt><dd><p>Mean velocity R² across features.</p>
+</dd>
+<dt>expr_r2_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature expression R² values.</p>
+</dd>
+<dt>vel_r2_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature velocity R² values.</p>
+</dd>
+<dt>expr_corr_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature Pearson correlation (expression).</p>
+</dd>
+<dt>vel_corr_gene<span class="classifier">list of float</span></dt><dd><p>Per-feature Pearson correlation (velocity).</p>
+</dd>
+<dt>X_pred<span class="classifier">ndarray</span></dt><dd><p>Reconstructed feature values.</p>
+</dd>
+<dt>V_pred<span class="classifier">ndarray</span></dt><dd><p>Reconstructed velocity values.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Expression reconstruction evaluates the spline prediction:</p>
+<div class="math notranslate nohighlight">
+\[\hat{X} = f(z)\]</div>
+<p>Velocity reconstruction evaluates the local linear pushforward:</p>
+<div class="math notranslate nohighlight">
+\[\hat{V} = J(z) \beta\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta\)</span> is obtained via least-squares fit at
+each cell independently.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-flowmap.plot">
+<span id="plotting"></span><h2>Plotting<a class="headerlink" href="#module-flowmap.plot" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_2d_quiver">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_2d_quiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/quiver2d.html#plot_2d_quiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_2d_quiver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_3d_quiver">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_3d_quiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/quiver3d.html#plot_3d_quiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_3d_quiver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_3d_scatter">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_3d_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dot_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/scatter3d.html#plot_3d_scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_3d_scatter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_velocity_grid">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_velocity_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_vf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/gridplot.html#plot_velocity_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_velocity_grid" title="Link to this definition"></a></dt>
+<dd><p>Plot a 2D velocity field as quiver arrows evaluated on a grid.</p>
+<p>This visualization evaluates a smooth vector field on a masked
+rectilinear grid and displays it using matplotlib’s quiver plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_emb</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em>) – 2D embedding coordinates.</p></li>
+<li><p><strong>spline_vf</strong> (<a class="reference internal" href="#flowmap.Spline" title="flowmap.Spline"><em>Spline</em></a><em>, </em><em>optional</em>) – Pre-fitted flowmap.spline.Spline model.
+If None, a spline is fitted from V.</p></li>
+<li><p><strong>V</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em><em>, </em><em>optional</em>) – Raw velocity vectors corresponding to X_emb.
+Required if <cite>spline_vf</cite> is None.</p></li>
+<li><p><strong>grid_size</strong> (<em>int</em>) – Resolution of the evaluation grid.</p></li>
+<li><p><strong>grid_density</strong> (<em>float</em>) – Multiplier controlling grid sampling density.</p></li>
+<li><p><strong>smooth</strong> (<em>float</em>) – Density smoothing parameter used for grid masking.</p></li>
+<li><p><strong>min_mass</strong> (<em>float</em>) – Threshold for masking low-density grid regions.</p></li>
+<li><p><strong>arrow_scale</strong> (<em>float</em>) – Scaling factor controlling quiver arrow length.</p></li>
+<li><p><strong>arrow_width</strong> (<em>float</em>) – Width of quiver arrows.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Grid construction and masking are handled by
+<cite>flowmap.utils.compute_velocity_on_grid</cite>.</p></li>
+<li><p>Designed for RNA velocity visualization but applicable
+to any 2D vector field.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_velocity_stream">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_velocity_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_2d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'grey'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrowsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'equal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">streamline_thickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/streamplot.html#plot_velocity_stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_velocity_stream" title="Link to this definition"></a></dt>
+<dd><p>Plot a 2D velocity field as streamlines over an embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_2d</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em>) – 2D embedding coordinates.</p></li>
+<li><p><strong>spline</strong> (<a class="reference internal" href="#flowmap.Spline" title="flowmap.Spline"><em>Spline</em></a><em>, </em><em>optional</em>) – Pre-fitted flowmap.spline.Spline model mapping X_2d → velocity.
+If None, a spline will be fitted using V.</p></li>
+<li><p><strong>V</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em><em>, </em><em>optional</em>) – Raw velocity vectors. Required if <cite>spline</cite> is None.</p></li>
+<li><p><strong>grid_size</strong> (<em>int</em>) – Resolution of evaluation grid.</p></li>
+<li><p><strong>stream_density</strong> (<em>float</em>) – Density of streamlines.</p></li>
+<li><p><strong>streamline_thickness</strong> (<em>float</em>) – Scaling factor for linewidth proportional to speed magnitude.</p></li>
+<li><p><strong>pad_frac</strong> (<em>float</em>) – Fractional padding added around axis limits.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-flowmap.utils">
+<span id="utilities"></span><h2>Utilities<a class="headerlink" href="#module-flowmap.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.utils.compute_velocity_on_grid">
+<span class="sig-prename descclassname"><span class="pre">flowmap.utils.</span></span><span class="sig-name descname"><span class="pre">compute_velocity_on_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_vf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_mesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/utils/_grid.html#compute_velocity_on_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.utils.compute_velocity_on_grid" title="Link to this definition"></a></dt>
+<dd><p>Internal utility for constructing a masked evaluation grid
+over an embedding and optionally evaluating a spline-based vector field.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="flowmap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

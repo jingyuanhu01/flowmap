@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flowmap.plot package &mdash; FlowMap 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FlowMap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">flowmap</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FlowMap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">flowmap.plot package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/flowmap.plot.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="flowmap-plot-package">
+<h1>flowmap.plot package<a class="headerlink" href="#flowmap-plot-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-flowmap.plot.gridplot">
+<span id="flowmap-plot-gridplot-module"></span><h2>flowmap.plot.gridplot module<a class="headerlink" href="#module-flowmap.plot.gridplot" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.gridplot.plot_velocity_grid">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.gridplot.</span></span><span class="sig-name descname"><span class="pre">plot_velocity_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_vf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/gridplot.html#plot_velocity_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.gridplot.plot_velocity_grid" title="Link to this definition"></a></dt>
+<dd><p>Plot a 2D velocity field as quiver arrows evaluated on a grid.</p>
+<p>This visualization evaluates a smooth vector field on a masked
+rectilinear grid and displays it using matplotlib’s quiver plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_emb</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em>) – 2D embedding coordinates.</p></li>
+<li><p><strong>spline_vf</strong> (<a class="reference internal" href="flowmap.html#flowmap.Spline" title="flowmap.Spline"><em>Spline</em></a><em>, </em><em>optional</em>) – Pre-fitted flowmap.spline.Spline model.
+If None, a spline is fitted from V.</p></li>
+<li><p><strong>V</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em><em>, </em><em>optional</em>) – Raw velocity vectors corresponding to X_emb.
+Required if <cite>spline_vf</cite> is None.</p></li>
+<li><p><strong>grid_size</strong> (<em>int</em>) – Resolution of the evaluation grid.</p></li>
+<li><p><strong>grid_density</strong> (<em>float</em>) – Multiplier controlling grid sampling density.</p></li>
+<li><p><strong>smooth</strong> (<em>float</em>) – Density smoothing parameter used for grid masking.</p></li>
+<li><p><strong>min_mass</strong> (<em>float</em>) – Threshold for masking low-density grid regions.</p></li>
+<li><p><strong>arrow_scale</strong> (<em>float</em>) – Scaling factor controlling quiver arrow length.</p></li>
+<li><p><strong>arrow_width</strong> (<em>float</em>) – Width of quiver arrows.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Grid construction and masking are handled by
+<cite>flowmap.utils.compute_velocity_on_grid</cite>.</p></li>
+<li><p>Designed for RNA velocity visualization but applicable
+to any 2D vector field.</p></li>
+</ul>
+</dd></dl>
+
+</section>
+<section id="module-flowmap.plot.quiver2d">
+<span id="flowmap-plot-quiver2d-module"></span><h2>flowmap.plot.quiver2d module<a class="headerlink" href="#module-flowmap.plot.quiver2d" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.quiver2d.plot_2d_quiver">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.quiver2d.</span></span><span class="sig-name descname"><span class="pre">plot_2d_quiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/quiver2d.html#plot_2d_quiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.quiver2d.plot_2d_quiver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-flowmap.plot.quiver3d">
+<span id="flowmap-plot-quiver3d-module"></span><h2>flowmap.plot.quiver3d module<a class="headerlink" href="#module-flowmap.plot.quiver3d" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.quiver3d.plot_3d_quiver">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.quiver3d.</span></span><span class="sig-name descname"><span class="pre">plot_3d_quiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/quiver3d.html#plot_3d_quiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.quiver3d.plot_3d_quiver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-flowmap.plot.scatter3d">
+<span id="flowmap-plot-scatter3d-module"></span><h2>flowmap.plot.scatter3d module<a class="headerlink" href="#module-flowmap.plot.scatter3d" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.scatter3d.plot_3d_scatter">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.scatter3d.</span></span><span class="sig-name descname"><span class="pre">plot_3d_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dot_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/scatter3d.html#plot_3d_scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.scatter3d.plot_3d_scatter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-flowmap.plot.streamplot">
+<span id="flowmap-plot-streamplot-module"></span><h2>flowmap.plot.streamplot module<a class="headerlink" href="#module-flowmap.plot.streamplot" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.streamplot.plot_velocity_stream">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.streamplot.</span></span><span class="sig-name descname"><span class="pre">plot_velocity_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_2d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'grey'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrowsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'equal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">streamline_thickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/streamplot.html#plot_velocity_stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.streamplot.plot_velocity_stream" title="Link to this definition"></a></dt>
+<dd><p>Plot a 2D velocity field as streamlines over an embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_2d</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em>) – 2D embedding coordinates.</p></li>
+<li><p><strong>spline</strong> (<a class="reference internal" href="flowmap.html#flowmap.Spline" title="flowmap.Spline"><em>Spline</em></a><em>, </em><em>optional</em>) – Pre-fitted flowmap.spline.Spline model mapping X_2d → velocity.
+If None, a spline will be fitted using V.</p></li>
+<li><p><strong>V</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em><em>, </em><em>optional</em>) – Raw velocity vectors. Required if <cite>spline</cite> is None.</p></li>
+<li><p><strong>grid_size</strong> (<em>int</em>) – Resolution of evaluation grid.</p></li>
+<li><p><strong>stream_density</strong> (<em>float</em>) – Density of streamlines.</p></li>
+<li><p><strong>streamline_thickness</strong> (<em>float</em>) – Scaling factor for linewidth proportional to speed magnitude.</p></li>
+<li><p><strong>pad_frac</strong> (<em>float</em>) – Fractional padding added around axis limits.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-flowmap.plot">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-flowmap.plot" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_2d_quiver">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_2d_quiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/quiver2d.html#plot_2d_quiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_2d_quiver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_3d_quiver">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_3d_quiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/quiver3d.html#plot_3d_quiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_3d_quiver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_3d_scatter">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_3d_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dot_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/scatter3d.html#plot_3d_scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_3d_scatter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_velocity_grid">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_velocity_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline_vf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/gridplot.html#plot_velocity_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_velocity_grid" title="Link to this definition"></a></dt>
+<dd><p>Plot a 2D velocity field as quiver arrows evaluated on a grid.</p>
+<p>This visualization evaluates a smooth vector field on a masked
+rectilinear grid and displays it using matplotlib’s quiver plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_emb</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em>) – 2D embedding coordinates.</p></li>
+<li><p><strong>spline_vf</strong> (<a class="reference internal" href="flowmap.html#flowmap.Spline" title="flowmap.Spline"><em>Spline</em></a><em>, </em><em>optional</em>) – Pre-fitted flowmap.spline.Spline model.
+If None, a spline is fitted from V.</p></li>
+<li><p><strong>V</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em><em>, </em><em>optional</em>) – Raw velocity vectors corresponding to X_emb.
+Required if <cite>spline_vf</cite> is None.</p></li>
+<li><p><strong>grid_size</strong> (<em>int</em>) – Resolution of the evaluation grid.</p></li>
+<li><p><strong>grid_density</strong> (<em>float</em>) – Multiplier controlling grid sampling density.</p></li>
+<li><p><strong>smooth</strong> (<em>float</em>) – Density smoothing parameter used for grid masking.</p></li>
+<li><p><strong>min_mass</strong> (<em>float</em>) – Threshold for masking low-density grid regions.</p></li>
+<li><p><strong>arrow_scale</strong> (<em>float</em>) – Scaling factor controlling quiver arrow length.</p></li>
+<li><p><strong>arrow_width</strong> (<em>float</em>) – Width of quiver arrows.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Grid construction and masking are handled by
+<cite>flowmap.utils.compute_velocity_on_grid</cite>.</p></li>
+<li><p>Designed for RNA velocity visualization but applicable
+to any 2D vector field.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flowmap.plot.plot_velocity_stream">
+<span class="sig-prename descclassname"><span class="pre">flowmap.plot.</span></span><span class="sig-name descname"><span class="pre">plot_velocity_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_2d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'grey'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrowsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'equal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">streamline_thickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/plot/streamplot.html#plot_velocity_stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.plot.plot_velocity_stream" title="Link to this definition"></a></dt>
+<dd><p>Plot a 2D velocity field as streamlines over an embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_2d</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em>) – 2D embedding coordinates.</p></li>
+<li><p><strong>spline</strong> (<a class="reference internal" href="flowmap.html#flowmap.Spline" title="flowmap.Spline"><em>Spline</em></a><em>, </em><em>optional</em>) – Pre-fitted flowmap.spline.Spline model mapping X_2d → velocity.
+If None, a spline will be fitted using V.</p></li>
+<li><p><strong>V</strong> (<em>(</em><em>n</em><em>, </em><em>2</em><em>) </em><em>array</em><em>, </em><em>optional</em>) – Raw velocity vectors. Required if <cite>spline</cite> is None.</p></li>
+<li><p><strong>grid_size</strong> (<em>int</em>) – Resolution of evaluation grid.</p></li>
+<li><p><strong>stream_density</strong> (<em>float</em>) – Density of streamlines.</p></li>
+<li><p><strong>streamline_thickness</strong> (<em>float</em>) – Scaling factor for linewidth proportional to speed magnitude.</p></li>
+<li><p><strong>pad_frac</strong> (<em>float</em>) – Fractional padding added around axis limits.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,534 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flowmap.geometry package &mdash; FlowMap 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FlowMap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">flowmap</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FlowMap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">flowmap.geometry package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/flowmap.geometry.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="flowmap-geometry-package">
+<h1>flowmap.geometry package<a class="headerlink" href="#flowmap-geometry-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-flowmap.geometry.fixed_points">
+<span id="flowmap-geometry-fixed-points-module"></span><h2>flowmap.geometry.fixed_points module<a class="headerlink" href="#module-flowmap.geometry.fixed_points" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.geometry.fixed_points.FixedPointAnalyzer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.geometry.fixed_points.</span></span><span class="sig-name descname"><span class="pre">FixedPointAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.fixed_points.FixedPointAnalyzer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fixed-point detection and classification for smooth vector fields
+defined on a FlowMap embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>embedding</strong> (<a class="reference internal" href="flowmap.html#flowmap.VectorFieldEmbedder" title="flowmap.VectorFieldEmbedder"><em>VectorFieldEmbedder</em></a>) – <p>Must expose:</p>
+<ul class="simple">
+<li><p>X_emb : ndarray (N, d)</p></li>
+<li><p>V_emb : ndarray (N, d)</p></li>
+<li><p>spline : Spline</p></li>
+<li><p>spline_vf : Spline</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.fixed_points.FixedPointAnalyzer.classify_fixed_point">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">classify_fixed_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer.classify_fixed_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.fixed_points.FixedPointAnalyzer.classify_fixed_point" title="Link to this definition"></a></dt>
+<dd><p>Classify a fixed point using linear stability analysis of its Jacobian.</p>
+<p>The classification is determined from the eigenvalue spectrum
+of the Jacobian matrix evaluated at the fixed point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>d</em><em>, </em><em>d</em><em>)</em>) – Jacobian matrix of the vector field at the fixed point.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>default=1e-4</em>) – Numerical tolerance used to determine whether eigenvalues
+are considered zero or have non-negligible imaginary parts.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>One of:</p>
+<ul class="simple">
+<li><p>”Stable node (sink)”</p></li>
+<li><p>”Unstable node (source)”</p></li>
+<li><p>”Saddle”</p></li>
+<li><p>”Degenerate”</p></li>
+<li><p>”Center”</p></li>
+<li><p>”Spiral in”</p></li>
+<li><p>”Spiral out”</p></li>
+<li><p>”Mixed focus”</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Let <span class="math notranslate nohighlight">\(\lambda_i \in \mathbb{C}\)</span> denote the eigenvalues of <code class="docutils literal notranslate"><span class="pre">J</span></code>.</p>
+<ul class="simple">
+<li><p>Stability is determined by the sign of <span class="math notranslate nohighlight">\(\Re(\lambda_i)\)</span>.</p></li>
+<li><p>Purely real spectra correspond to node or saddle behavior.</p></li>
+<li><p>Complex conjugate pairs indicate rotational (spiral or center) dynamics.</p></li>
+<li><dl class="simple">
+<dt>A fixed point is:</dt><dd><ul>
+<li><p>Stable if all <span class="math notranslate nohighlight">\(\Re(\lambda_i) &lt; 0\)</span></p></li>
+<li><p>Unstable if all <span class="math notranslate nohighlight">\(\Re(\lambda_i) &gt; 0\)</span></p></li>
+<li><p>A saddle if signs are mixed</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>This classification corresponds to the local linearization of the
+dynamical system near the fixed point.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.fixed_points.FixedPointAnalyzer.identify_fixed_points">
+<span class="sig-name descname"><span class="pre">identify_fixed_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed_smooth_sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_speed_quantile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer.identify_fixed_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.fixed_points.FixedPointAnalyzer.identify_fixed_points" title="Link to this definition"></a></dt>
+<dd><p>Identify and classify fixed points from grid-sampled velocities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xg</strong> (<em>ndarray</em><em> (</em><em>Ng</em><em>, </em><em>d</em><em>)</em>) – Grid coordinates.</p></li>
+<li><p><strong>Vg</strong> (<em>ndarray</em><em> (</em><em>Ng</em><em>, </em><em>d</em><em>)</em>) – Velocity evaluated on grid.</p></li>
+<li><p><strong>grid_shape</strong> (<em>tuple</em>) – Shape of grid used for reshaping.</p></li>
+<li><p><strong>speed_smooth_sigma</strong> (<em>float</em>) – Gaussian smoothing bandwidth.</p></li>
+<li><p><strong>global_speed_quantile</strong> (<em>float</em>) – Global speed threshold for filtering.</p></li>
+<li><p><strong>radius_percent</strong> (<em>float</em>) – Neighborhood radius relative to embedding scale.</p></li>
+<li><p><strong>weighted</strong> (<em>bool</em>) – Whether to use weighted Jacobian fitting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Each dict contains:</p>
+<ul class="simple">
+<li><p>position : ndarray (d,)</p></li>
+<li><p>jacobian : ndarray (d, d)</p></li>
+<li><p>type : str</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-flowmap.geometry.gradient_analyzer">
+<span id="flowmap-geometry-gradient-analyzer-module"></span><h2>flowmap.geometry.gradient_analyzer module<a class="headerlink" href="#module-flowmap.geometry.gradient_analyzer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.geometry.gradient_analyzer.GeneGradientAnalyzer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.geometry.gradient_analyzer.</span></span><span class="sig-name descname"><span class="pre">GeneGradientAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.gradient_analyzer.GeneGradientAnalyzer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Analyze gene-level gradients in embedding space.</p>
+<p>This class evaluates the geometry of gene-expression gradients
+reconstructed via the gene-level spline.</p>
+<p>For each cell, the spline Jacobian provides:</p>
+<blockquote>
+<div><p>J(z) = ∂X_gene / ∂z</p>
+</div></blockquote>
+<p>Combined with the pullback metric, this allows computing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Riemannian gradients</p></li>
+<li><p>Alignment with local velocity</p></li>
+<li><p>Parallel / orthogonal components</p></li>
+</ul>
+</div></blockquote>
+<p>No plotting is performed here. Visualization should be handled
+in the plotting module.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.gradient_analyzer.GeneGradientAnalyzer.compute_relative_gradients">
+<span class="sig-name descname"><span class="pre">compute_relative_gradients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'magnitude'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer.compute_relative_gradients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.gradient_analyzer.GeneGradientAnalyzer.compute_relative_gradients" title="Link to this definition"></a></dt>
+<dd><p>Compute relative orientation of gene gradients to velocity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>neighbor_indices</strong> (<em>ndarray</em>) – Cells near region of interest.</p></li>
+<li><p><strong>gene_indices</strong> (<em>ndarray</em>) – Genes to analyze.</p></li>
+<li><p><strong>weight</strong> (<em>{&quot;magnitude&quot;</em><em>, </em><em>&quot;uniform&quot;}</em><em>, </em><em>default=&quot;magnitude&quot;</em>) – Weighting scheme for averaging across cells.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Contains:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>angles<span class="classifier">ndarray</span></dt><dd><p>Mean angle (radians) relative to velocity direction.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>magnitudes<span class="classifier">ndarray</span></dt><dd><p>Mean projected gradient magnitude.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.gradient_analyzer.GeneGradientAnalyzer.find_neighbors">
+<span class="sig-name descname"><span class="pre">find_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer.find_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.gradient_analyzer.GeneGradientAnalyzer.find_neighbors" title="Link to this definition"></a></dt>
+<dd><p>Find cells near a trajectory in embedding space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trajectory</strong> (<em>ndarray</em><em> (</em><em>m</em><em>, </em><em>d</em><em>)</em>) – Path in embedding space.</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em><em>, </em><em>default=0.05</em>) – Relative neighborhood radius (fraction of embedding scale).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Indices of neighboring cells.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-flowmap.geometry">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-flowmap.geometry" title="Link to this heading"></a></h2>
+<p>Geometry submodule.</p>
+<p>Provides differential geometric analysis tools for
+vector-field embeddings.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.geometry.FixedPointAnalyzer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.geometry.</span></span><span class="sig-name descname"><span class="pre">FixedPointAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.FixedPointAnalyzer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fixed-point detection and classification for smooth vector fields
+defined on a FlowMap embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>embedding</strong> (<a class="reference internal" href="flowmap.html#flowmap.VectorFieldEmbedder" title="flowmap.VectorFieldEmbedder"><em>VectorFieldEmbedder</em></a>) – <p>Must expose:</p>
+<ul class="simple">
+<li><p>X_emb : ndarray (N, d)</p></li>
+<li><p>V_emb : ndarray (N, d)</p></li>
+<li><p>spline : Spline</p></li>
+<li><p>spline_vf : Spline</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.FixedPointAnalyzer.classify_fixed_point">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">classify_fixed_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer.classify_fixed_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.FixedPointAnalyzer.classify_fixed_point" title="Link to this definition"></a></dt>
+<dd><p>Classify a fixed point using linear stability analysis of its Jacobian.</p>
+<p>The classification is determined from the eigenvalue spectrum
+of the Jacobian matrix evaluated at the fixed point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>d</em><em>, </em><em>d</em><em>)</em>) – Jacobian matrix of the vector field at the fixed point.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>default=1e-4</em>) – Numerical tolerance used to determine whether eigenvalues
+are considered zero or have non-negligible imaginary parts.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>One of:</p>
+<ul class="simple">
+<li><p>”Stable node (sink)”</p></li>
+<li><p>”Unstable node (source)”</p></li>
+<li><p>”Saddle”</p></li>
+<li><p>”Degenerate”</p></li>
+<li><p>”Center”</p></li>
+<li><p>”Spiral in”</p></li>
+<li><p>”Spiral out”</p></li>
+<li><p>”Mixed focus”</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Let <span class="math notranslate nohighlight">\(\lambda_i \in \mathbb{C}\)</span> denote the eigenvalues of <code class="docutils literal notranslate"><span class="pre">J</span></code>.</p>
+<ul class="simple">
+<li><p>Stability is determined by the sign of <span class="math notranslate nohighlight">\(\Re(\lambda_i)\)</span>.</p></li>
+<li><p>Purely real spectra correspond to node or saddle behavior.</p></li>
+<li><p>Complex conjugate pairs indicate rotational (spiral or center) dynamics.</p></li>
+<li><dl class="simple">
+<dt>A fixed point is:</dt><dd><ul>
+<li><p>Stable if all <span class="math notranslate nohighlight">\(\Re(\lambda_i) &lt; 0\)</span></p></li>
+<li><p>Unstable if all <span class="math notranslate nohighlight">\(\Re(\lambda_i) &gt; 0\)</span></p></li>
+<li><p>A saddle if signs are mixed</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>This classification corresponds to the local linearization of the
+dynamical system near the fixed point.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.FixedPointAnalyzer.identify_fixed_points">
+<span class="sig-name descname"><span class="pre">identify_fixed_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed_smooth_sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_speed_quantile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/flowmap/geometry/fixed_points.html#FixedPointAnalyzer.identify_fixed_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.FixedPointAnalyzer.identify_fixed_points" title="Link to this definition"></a></dt>
+<dd><p>Identify and classify fixed points from grid-sampled velocities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xg</strong> (<em>ndarray</em><em> (</em><em>Ng</em><em>, </em><em>d</em><em>)</em>) – Grid coordinates.</p></li>
+<li><p><strong>Vg</strong> (<em>ndarray</em><em> (</em><em>Ng</em><em>, </em><em>d</em><em>)</em>) – Velocity evaluated on grid.</p></li>
+<li><p><strong>grid_shape</strong> (<em>tuple</em>) – Shape of grid used for reshaping.</p></li>
+<li><p><strong>speed_smooth_sigma</strong> (<em>float</em>) – Gaussian smoothing bandwidth.</p></li>
+<li><p><strong>global_speed_quantile</strong> (<em>float</em>) – Global speed threshold for filtering.</p></li>
+<li><p><strong>radius_percent</strong> (<em>float</em>) – Neighborhood radius relative to embedding scale.</p></li>
+<li><p><strong>weighted</strong> (<em>bool</em>) – Whether to use weighted Jacobian fitting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Each dict contains:</p>
+<ul class="simple">
+<li><p>position : ndarray (d,)</p></li>
+<li><p>jacobian : ndarray (d, d)</p></li>
+<li><p>type : str</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.geometry.GeneGradientAnalyzer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.geometry.</span></span><span class="sig-name descname"><span class="pre">GeneGradientAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.GeneGradientAnalyzer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Analyze gene-level gradients in embedding space.</p>
+<p>This class evaluates the geometry of gene-expression gradients
+reconstructed via the gene-level spline.</p>
+<p>For each cell, the spline Jacobian provides:</p>
+<blockquote>
+<div><p>J(z) = ∂X_gene / ∂z</p>
+</div></blockquote>
+<p>Combined with the pullback metric, this allows computing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Riemannian gradients</p></li>
+<li><p>Alignment with local velocity</p></li>
+<li><p>Parallel / orthogonal components</p></li>
+</ul>
+</div></blockquote>
+<p>No plotting is performed here. Visualization should be handled
+in the plotting module.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.GeneGradientAnalyzer.compute_relative_gradients">
+<span class="sig-name descname"><span class="pre">compute_relative_gradients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'magnitude'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer.compute_relative_gradients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.GeneGradientAnalyzer.compute_relative_gradients" title="Link to this definition"></a></dt>
+<dd><p>Compute relative orientation of gene gradients to velocity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>neighbor_indices</strong> (<em>ndarray</em>) – Cells near region of interest.</p></li>
+<li><p><strong>gene_indices</strong> (<em>ndarray</em>) – Genes to analyze.</p></li>
+<li><p><strong>weight</strong> (<em>{&quot;magnitude&quot;</em><em>, </em><em>&quot;uniform&quot;}</em><em>, </em><em>default=&quot;magnitude&quot;</em>) – Weighting scheme for averaging across cells.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Contains:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>angles<span class="classifier">ndarray</span></dt><dd><p>Mean angle (radians) relative to velocity direction.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>magnitudes<span class="classifier">ndarray</span></dt><dd><p>Mean projected gradient magnitude.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.GeneGradientAnalyzer.find_neighbors">
+<span class="sig-name descname"><span class="pre">find_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/flowmap/geometry/gradient_analyzer.html#GeneGradientAnalyzer.find_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.GeneGradientAnalyzer.find_neighbors" title="Link to this definition"></a></dt>
+<dd><p>Find cells near a trajectory in embedding space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trajectory</strong> (<em>ndarray</em><em> (</em><em>m</em><em>, </em><em>d</em><em>)</em>) – Path in embedding space.</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em><em>, </em><em>default=0.05</em>) – Relative neighborhood radius (fraction of embedding scale).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Indices of neighboring cells.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flowmap.geometry.LagrangianPathOptimizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">flowmap.geometry.</span></span><span class="sig-name descname"><span class="pre">LagrangianPathOptimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flowmap/geometry/least_action_path.html#LagrangianPathOptimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.LagrangianPathOptimizer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Minimum-action path computation for FlowMap embeddings.</p>
+<p>This class computes transition trajectories under the action:</p>
+<div class="math notranslate nohighlight">
+\[S[x] = \frac{1}{2D} \int ||\dot{x} - v(x)||^2 dt
+       + \lambda \int ||\dot{x}||^2 dt\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p>v(x) is the embedded vector field</p></li>
+<li><p>D is the diffusion constant</p></li>
+<li><p>λ is an arc-length regularization weight</p></li>
+</ul>
+<p>The optimizer:</p>
+<ol class="arabic simple">
+<li><p>Initializes a path via Dijkstra on a kNN graph</p></li>
+<li><p>Refines the path by gradient descent on the action functional</p></li>
+</ol>
+<dl class="py method">
+<dt class="sig sig-object py" id="flowmap.geometry.LagrangianPathOptimizer.fit_path">
+<span class="sig-name descname"><span class="pre">fit_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'embed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_segments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/flowmap/geometry/least_action_path.html#LagrangianPathOptimizer.fit_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flowmap.geometry.LagrangianPathOptimizer.fit_path" title="Link to this definition"></a></dt>
+<dd><p>Compute minimum-action transition path between two states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>ndarray</em><em> (</em><em>d</em><em>,</em><em>)</em>) – Starting coordinate.</p></li>
+<li><p><strong>end</strong> (<em>ndarray</em><em> (</em><em>d</em><em>,</em><em>)</em>) – Ending coordinate.</p></li>
+<li><p><strong>distance_mode</strong> (<em>{&quot;embed&quot;</em><em>, </em><em>&quot;orig&quot;}</em>) – Graph geometry for initialization.</p></li>
+<li><p><strong>subsample_n</strong> (<em>int</em>) – Number of points used for graph.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Number of nearest neighbors.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Velocity-alignment weight.</p></li>
+<li><p><strong>n_segments</strong> (<em>int</em>) – Number of discretization segments.</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – Gradient descent learning rate.</p></li>
+<li><p><strong>iters</strong> (<em>int</em>) – Number of refinement iterations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>path_init</p></li>
+<li><p>path_refined</p></li>
+<li><p>dt</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict with keys</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
