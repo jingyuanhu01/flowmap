@@ -355,8 +355,8 @@ class ThinPlateSpline:
             np.ndarray: Jacobians for all evaluation points with shape (num_evals, target_dim, d).
         """
         control_points = self.control_points
-        weights = self.weights
-        coeffs = self.coeffs
+        weights = self.radial_coefficients
+        coeffs = self.polynomial_coefficients
 
         # Get dimensions.
         num_evals, d = evaluation_points.shape  # Number of evaluation points & space dimension.
@@ -396,7 +396,7 @@ class ThinPlateSpline:
     def compute_hessians(self, evaluation_points, eps=1e-10):
         # Extract TPS parameters
         control_points = self.control_points
-        weights = self.weights
+        weights = self.radial_coefficients
 
         # Get dimensions
         M, d_dim = evaluation_points.shape  # Number of evaluation points and input dimension

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from flowmap.core.spline import Spline
+from flowmap.core.thin_plate_spline import ThinPlateSpline
 from flowmap.utils import compute_velocity_on_grid
 
 
@@ -93,8 +93,8 @@ def plot_velocity_grid(
             V_fit = V
             print(f"[Spline] Using all {n_points} points for fitting …")
 
-        spline_vf = Spline(X_fit)
-        spline_vf.fit(V_fit)
+        spline = ThinPlateSpline(X_fit)
+        spline.fit(V_fit)
 
     # --------------------------------------------------
     # 2. Evaluate on grid

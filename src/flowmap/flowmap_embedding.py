@@ -19,14 +19,13 @@ from __future__ import annotations
 
 import random
 import warnings
-from typing import Optional
+from typing import Optional, Any
 
 import numpy as np
 from sklearn.decomposition import TruncatedSVD
 from sklearn.manifold import TSNE
 import umap.umap_ as umap
 
-from .core.spline import Spline
 from .core.phase_distance_solver import PhaseDistanceGraphSolver
 from .core.embedding_refiner import (
     EmbeddingSGDRefiner,
@@ -85,6 +84,7 @@ class VectorFieldEmbedder:
         V: np.ndarray,
         *,
         method: str = "umap",
+        spline_type: str = "thin_plate",
         embedding_dim: int = 2,
         dof: float = 30,
         dof_vf: Optional[float] = None,
@@ -110,6 +110,7 @@ class VectorFieldEmbedder:
         self.V = V
 
         self.method = method.lower()
+        self.spline_type = spline_type.lower()
         self.dist_method = dist_method.lower()
         self.embedding_dim = embedding_dim
 
@@ -127,8 +128,8 @@ class VectorFieldEmbedder:
         self.spline_kwargs = spline_kwargs or {}
         self.spline_vf_kwargs = spline_vf_kwargs or {}
 
-        self.spline: Optional[Spline] = None
-        self.velocity_spline: Optional[Spline] = None
+        self.spline: Optional[Any] = None
+        self.spline_vf: Optional[Any] = None
 
         # Optional PCA pre-projection
         if use_PCA and X.shape[1] > 50:
@@ -273,7 +274,22 @@ class VectorFieldEmbedder:
         print("[FlowMap] Done.")
 
 
+    def _get_spline_class(self):
+        if self.spline_type == "polyharmonic":
+            from .core.polyharmonic_spline import PolyharmonicSpline
+            return PolyharmonicSpline
+        elif self.spline_type == "thin_plate":
+            from .core.thin_plate_spline import ThinPlateSpline
+            return ThinPlateSpline
+        else:
+            raise ValueError(
+                f"Unknown spline_type: {self.spline_type}. "
+                "Use 'polyharmonic' or 'thin_plate'."
+            )
+
+
     def _fit_splines(self, X_emb: np.ndarray) -> None:
+        SplineClass = self._get_spline_class()
 
         # Optional subsampling
         if self.n_spline_points is not None:
@@ -283,7 +299,7 @@ class VectorFieldEmbedder:
 
         print(f"[Spline] Fitting manifold spline on {X_fit.shape[0]} cells …")
 
-        self.spline = Spline(
+        self.spline = SplineClass(
             X_emb_fit,
             n_control_points=self.n_control_points,
             **self.spline_kwargs,
@@ -295,7 +311,7 @@ class VectorFieldEmbedder:
 
         print("[Spline] Fitting velocity spline …")
 
-        self.spline_vf = Spline(
+        self.spline_vf = SplineClass(
             X_emb_fit,
             n_control_points=self.n_control_points,
             **self.spline_vf_kwargs,
@@ -316,6 +332,7 @@ class VectorFieldEmbedder:
         Fit gene-level splines for expression and velocity fields.
         """
 
+        SplineClass = self._get_spline_class()
         if self.X_emb is None:
             raise RuntimeError("Run `fit_embedding()` before fitting gene splines.")
 
@@ -343,7 +360,7 @@ class VectorFieldEmbedder:
         # --------------------------------------------------------------
         print(f"[Spline-Gene] Fitting expression spline on {X_fit.shape[0]} cells …")
 
-        self.spline_gene = Spline(
+        self.spline_gene = SplineClass(
             X_emb_fit,
             n_control_points=self.n_control_points,
             **self.spline_kwargs,
@@ -362,7 +379,7 @@ class VectorFieldEmbedder:
         # --------------------------------------------------------------
         print("[Spline-Gene] Fitting velocity spline …")
 
-        self.spline_vf_gene = Spline(
+        self.spline_vf_gene = SplineClass(
             X_emb_fit,
             n_control_points=self.n_control_points,
             **self.spline_vf_kwargs,

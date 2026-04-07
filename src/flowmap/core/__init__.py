@@ -4,12 +4,14 @@ Optimization submodule.
 Path optimization and embedding refinement.
 """
 
-from .spline import Spline 
+from .thin_plate_spline import ThinPlateSpline
+from .polyharmonic_spline import PolyharmonicSpline
 from .phase_distance_solver import PhaseDistanceGraphSolver
 from .embedding_refiner import EmbeddingRefiner, EmbeddingSGDRefiner
 
 __all__ = [
-    "Spline",
+    "PolyharmonicSpline",
+    "ThinPlateSpline",
     "PhaseDistanceGraphSolver",
     "EmbeddingRefiner",
     "EmbeddingSGDRefiner",

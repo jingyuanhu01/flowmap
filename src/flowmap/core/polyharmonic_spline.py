@@ -23,7 +23,7 @@ from math import comb
 from typing import Optional, Tuple
 
 
-class Spline:
+class PolyharmonicSpline:
     """
     Polyharmonic spline regression model (2D triharmonic spline).
 
@@ -526,7 +526,7 @@ class Spline:
     
         Xev = np.asarray(evaluation_points, float)
     
-        centers = self.centers                  # (m, d)
+        centers = self.control_points           # (m, d)
         alpha = self.radial_coefficients        # (m, D)
         beta = self.polynomial_coefficients     # (p, D)
     
@@ -624,7 +624,7 @@ class Spline:
     
         Xev = np.asarray(evaluation_points, float)
     
-        centers = self.centers              # (m, d)
+        centers = self.control_points              # (m, d)
         alpha = self.radial_coefficients    # (m, D)
         beta = self.polynomial_coefficients # (p, D)
     
