@@ -40,11 +40,11 @@ class LagrangianPathOptimizer:
     embedding space, since ``spline_vf`` is defined there.
     """
 
-    def __init__(self, embedding, D: float = 1.0, lam: float = 0.0):
+    def __init__(self, emb, D: float = 1.0, lam: float = 0.0):
         """
         Parameters
         ----------
-        embedding : VectorFieldEmbedder
+        emb : VectorFieldEmbedder
             Must expose:
 
             - X_emb : ndarray of shape (N, d_emb)
@@ -57,14 +57,13 @@ class LagrangianPathOptimizer:
         lam : float, default=0.0
             Arc-length regularization weight.
         """
-        self.embedding = embedding
+        self.emb = emb
 
-        self.X_emb = embedding.X_emb
-        self.V_emb = embedding.V_emb
-        self.X_orig = embedding.X
-        self.V_orig = embedding.V
-        self.spline_vf = embedding.spline_vf
-
+        self.X_emb = emb.X_emb
+        self.V_emb = emb.V_emb
+        self.X_orig = emb.X
+        self.V_orig = emb.V
+        self.spline_vf = emb.spline_vf
         self.D = D
         self.lam = lam
 
@@ -175,9 +174,10 @@ class LagrangianPathOptimizer:
 
     def fit_path(
         self,
-        start: np.ndarray,
-        end: np.ndarray,
+        start: np.ndarray | None = None,
+        end: np.ndarray | None = None,
         *,
+        path_init: np.ndarray | None = None,
         distance_mode: str = "embed",
         subsample_n: int = 4000,
         k: int = 20,
@@ -228,86 +228,95 @@ class LagrangianPathOptimizer:
             - ``dt`` : float
               Uniform discretization step.
         """
-        X_graph, V_graph = self._get_graph_data(distance_mode)
+        # --------------------------------------------------
+        # Initialization
+        # --------------------------------------------------
+        if path_init is not None:
+            # user-provided initialization
+            path_init = np.asarray(path_init)
 
-        n_cells = X_graph.shape[0]
-        idx_sub = np.random.choice(n_cells, min(subsample_n, n_cells), replace=False)
+            if path_init.ndim != 2:
+                raise ValueError("path_init must be (n_points, d_emb)")
 
-        # start/end are given in embedding space, so find anchor cell indices there
-        start_idx = int(np.argmin(np.linalg.norm(self.X_emb - start, axis=1)))
-        end_idx = int(np.argmin(np.linalg.norm(self.X_emb - end, axis=1)))
+            # override start/end implicitly
+            path_init = self._resample(path_init, n_segments)
 
-        # avoid duplicates if start/end are already in the subsample
-        idx_sub = idx_sub[(idx_sub != start_idx) & (idx_sub != end_idx)]
+        else:
+            # original graph-based initialization
 
-        # graph-space coordinates / velocities, dimension-matched
-        graph_indices = np.r_[start_idx, end_idx, idx_sub]
-        X_sub = X_graph[graph_indices]
-        V_sub = V_graph[graph_indices]
+            if start is None or end is None:
+                raise ValueError("Either provide path_init OR both start and end.")
 
-        # kNN graph
-        n_nodes = X_sub.shape[0]
-        if n_nodes < 2:
-            raise ValueError("Not enough nodes to construct a graph.")
+            X_graph, V_graph = self._get_graph_data(distance_mode)
 
-        n_neighbors = min(k + 1, n_nodes)
-        nbrs = NearestNeighbors(n_neighbors=n_neighbors).fit(X_sub)
-        dists, idxs = nbrs.kneighbors(X_sub)
+            n_cells = X_graph.shape[0]
+            idx_sub = np.random.choice(n_cells, min(subsample_n, n_cells), replace=False)
 
-        rows, cols, weights = [], [], []
+            start_idx = int(np.argmin(np.linalg.norm(self.X_emb - start, axis=1)))
+            end_idx = int(np.argmin(np.linalg.norm(self.X_emb - end, axis=1)))
 
-        for i in range(n_nodes):
-            for j, dist in zip(idxs[i, 1:], dists[i, 1:]):
-                weight = dist
+            idx_sub = idx_sub[(idx_sub != start_idx) & (idx_sub != end_idx)]
 
-                if alpha > 0:
-                    v = V_sub[i]
-                    direction = X_sub[j] - X_sub[i]
+            graph_indices = np.r_[start_idx, end_idx, idx_sub]
+            X_sub = X_graph[graph_indices]
+            V_sub = V_graph[graph_indices]
 
-                    v_norm = np.linalg.norm(v)
-                    d_norm = np.linalg.norm(direction)
+            n_nodes = X_sub.shape[0]
+            if n_nodes < 2:
+                raise ValueError("Not enough nodes to construct a graph.")
 
-                    if v_norm > 0 and d_norm > 0:
-                        cos_sim = np.dot(v, direction) / (v_norm * d_norm)
-                    else:
-                        cos_sim = 0.0
+            n_neighbors = min(k + 1, n_nodes)
+            nbrs = NearestNeighbors(n_neighbors=n_neighbors).fit(X_sub)
+            dists, idxs = nbrs.kneighbors(X_sub)
 
-                    weight *= 1.0 + alpha * (1.0 - cos_sim)
+            rows, cols, weights = [], [], []
 
-                rows.append(i)
-                cols.append(j)
-                weights.append(weight)
+            for i in range(n_nodes):
+                for j, dist in zip(idxs[i, 1:], dists[i, 1:]):
+                    weight = dist
 
-        W = csr_matrix((weights, (rows, cols)), shape=(n_nodes, n_nodes))
+                    if alpha > 0:
+                        v = V_sub[i]
+                        direction = X_sub[j] - X_sub[i]
 
-        _, predecessors = shortest_path(W, directed=False, return_predecessors=True)
+                        v_norm = np.linalg.norm(v)
+                        d_norm = np.linalg.norm(direction)
 
-        # recover path from node 0 (start) to node 1 (end)
-        path_node_ids = []
-        cur = 1
-        while cur != 0 and cur != -9999:
-            path_node_ids.append(cur)
-            cur = predecessors[0, cur]
+                        if v_norm > 0 and d_norm > 0:
+                            cos_sim = np.dot(v, direction) / (v_norm * d_norm)
+                        else:
+                            cos_sim = 0.0
 
-        if cur == -9999:
-            raise ValueError(
-                "No path found between start and end in the kNN graph. "
-                "Try increasing subsample_n or k."
-            )
+                        weight *= 1.0 + alpha * (1.0 - cos_sim)
 
-        path_node_ids.append(0)
-        path_node_ids = path_node_ids[::-1]
+                    rows.append(i)
+                    cols.append(j)
+                    weights.append(weight)
 
-        # map graph path back to embedding coordinates for refinement
-        path_cell_indices = graph_indices[path_node_ids]
-        path_coords_emb = self.X_emb[path_cell_indices]
+            W = csr_matrix((weights, (rows, cols)), shape=(n_nodes, n_nodes))
+            _, predecessors = shortest_path(W, directed=False, return_predecessors=True)
 
-        path_init = self._resample(path_coords_emb, n_segments)
+            path_node_ids = []
+            cur = 1
+            while cur != 0 and cur != -9999:
+                path_node_ids.append(cur)
+                cur = predecessors[0, cur]
+
+            if cur == -9999:
+                raise ValueError("No path found between start and end.")
+
+            path_node_ids.append(0)
+            path_node_ids = path_node_ids[::-1]
+
+            path_cell_indices = graph_indices[path_node_ids]
+            path_coords_emb = self.X_emb[path_cell_indices]
+
+            path_init = self._resample(path_coords_emb, n_segments)
+            
         path_refined, dt = self._optimize(path_init, lr, iters)
-
         return {
             "path_init": path_init,
             "path_refined": path_refined,
             "dt": dt,
         }
-        
+            

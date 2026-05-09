@@ -1,5 +1,5 @@
 """
-Curvature analysis for FlowMap embeddings.
+Flow geometry analysis for FlowMap embeddings.
 
 Compute geometric quantities for trajectories induced by the embedded
 vector field on the reconstructed expression manifold.
@@ -11,11 +11,17 @@ The trajectory in gene space is
 where ψ is the spline manifold and z(t) follows the embedded velocity
 field. Acceleration decomposes into:
 
-    A = A_along + A_steer + A_normal
+    A = A_flow + A_steer + A_surface
 
-and curvature satisfies:
+where
 
-    k_total² = k_geod² + k_normal²
+    flow    : acceleration along the trajectory
+    steer   : turning acceleration within the manifold
+    surface : acceleration normal to the manifold
+
+Curvature satisfies:
+
+    k_total² = k_steer² + k_surface²
 """
 
 from __future__ import annotations
@@ -55,15 +61,15 @@ def compute_flow_curvature(
             total : ambient velocity
 
         acceleration
-            total   : full ambient acceleration
-            along   : acceleration along trajectory
-            steer   : steering acceleration (within manifold)
-            normal  : acceleration orthogonal to manifold
+            total    : full ambient acceleration
+            flow     : acceleration along trajectory
+            steer    : turning acceleration within manifold
+            surface  : acceleration orthogonal to manifold
 
         curvature
-            total   : total curvature
-            geodesic : turning within manifold
-            normal  : extrinsic curvature
+            total    : total curvature
+            steer    : intrinsic turning curvature
+            surface  : extrinsic curvature
     """
 
     if X_emb is None:
@@ -117,20 +123,20 @@ def compute_flow_curvature(
     JTA = np.einsum("ndk,nd->nk", J, A)              # J^T A, shape (N, d)
     coef = np.einsum("nkl,nl->nk", g_inv, JTA)       # (J^T J)^(-1) J^T A
     A_tan = np.einsum("ndk,nk->nd", J, coef)         # J coef
-    A_normal = A - A_tan
 
-    a_along = np.einsum("nd,nd->n", A_tan, T)
+    a_flow = np.einsum("nd,nd->n", A_tan, T)
 
-    A_along = a_along[:, None] * T
-    A_steer = A_tan - A_along
+    A_flow = a_flow[:, None] * T
+    A_steer = A_tan - A_flow
+    A_surface = A - A_tan
 
     # --------------------------------------------------
     # Curvature
     # --------------------------------------------------
-    k_geod = np.linalg.norm(A_steer, axis=1) / (speed2 + eps)
-    k_normal = np.linalg.norm(A_normal, axis=1) / (speed2 + eps)
+    k_steer = np.linalg.norm(A_steer, axis=1) / (speed2 + eps)
+    k_surface = np.linalg.norm(A_surface, axis=1) / (speed2 + eps)
 
-    k_total = np.sqrt(k_geod**2 + k_normal**2)
+    k_total = np.sqrt(k_steer**2 + k_surface**2)
 
     # --------------------------------------------------
     # Structured output
@@ -141,13 +147,13 @@ def compute_flow_curvature(
         },
         "acceleration": {
             "total": A,
-            "along": A_along,
+            "flow": A_flow,
             "steer": A_steer,
-            "normal": A_normal,
+            "surface": A_surface,
         },
         "curvature": {
             "total": k_total,
-            "geodesic": k_geod,
-            "normal": k_normal,
+            "steer": k_steer,
+            "surface": k_surface,
         },
     }

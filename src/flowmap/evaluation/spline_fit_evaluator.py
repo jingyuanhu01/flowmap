@@ -124,8 +124,6 @@ class SplineFitEvaluator:
         self.X_emb = emb.X_emb
         self.V_emb = emb.V_emb
 
-        self.X_pred_all = self.spline.predict(self.X_emb)
-        self.J_all = self.spline.compute_jacobians(self.X_emb)
 
 
     def evaluate(self, cell_idx: Optional[np.ndarray] = None) -> Dict:
@@ -184,10 +182,11 @@ class SplineFitEvaluator:
         else:
             idx = np.asarray(cell_idx)
 
+        X_emb_sub = self.X_emb[idx]
         X_obs = self.X_ref[idx]
         V_obs = self.V_ref[idx]
-        X_pred = self.X_pred_all[idx]
-        J = self.J_all[idx]
+        X_pred = self.spline.predict(X_emb_sub)
+        J = self.spline.compute_jacobians(X_emb_sub)
 
         N, G = X_obs.shape
 

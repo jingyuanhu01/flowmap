@@ -496,34 +496,6 @@ class ThinPlateSpline:
         return Gamma
 
 
-    def compute_torsion(
-        self,
-        evaluation_points: np.ndarray,
-        eps: float = 1e-8
-    ) -> np.ndarray:
-        """
-        Compute torsion tensor.
-
-            T^k_{ij} = Γ^k_{ij} − Γ^k_{ji}
-
-        For a Levi-Civita connection,
-        torsion should vanish.
-
-        Parameters
-        ----------
-        evaluation_points : ndarray of shape (M, d)
-
-        Returns
-        -------
-        ndarray of shape (M, d, d, d)
-            Torsion tensor.
-        """
-
-        Gamma = self.compute_christoffels(evaluation_points, eps=eps)
-        T = Gamma - np.swapaxes(Gamma, axis1=2, axis2=3)
-        return T
-
-
     def curvature(
         self,
         evaluation_points: np.ndarray,
