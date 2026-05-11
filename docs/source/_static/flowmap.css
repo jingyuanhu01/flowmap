@@ -1,0 +1,101 @@
+.flowmap-hero {
+  padding: 2.5rem 0 1.5rem;
+  max-width: 760px;
+}
+
+.sidebar-logo {
+  max-width: 88%;
+}
+
+.flowmap-kicker {
+  color: var(--color-brand-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.flowmap-hero h1 {
+  font-size: clamp(3rem, 8vw, 5.75rem);
+  line-height: 0.95;
+  margin: 0 0 1rem;
+}
+
+.flowmap-lede {
+  font-size: 1.2rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.flowmap-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+}
+
+.flowmap-actions a {
+  border: 1px solid var(--color-brand-primary);
+  border-radius: 999px;
+  color: var(--color-brand-primary);
+  font-weight: 650;
+  padding: 0.45rem 0.9rem;
+  text-decoration: none;
+}
+
+.flowmap-actions a:first-child {
+  background: var(--color-brand-primary);
+  color: var(--color-background-primary);
+}
+
+.flowmap-main-figure {
+  margin: 1.25rem 0 2rem;
+}
+
+.flowmap-compact-figure {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60%;
+}
+
+.flowmap-main-figure img {
+  background: #fff;
+  border: 1px solid var(--color-background-border);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  padding: 0.75rem;
+}
+
+.flowmap-main-figure figcaption {
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.flowmap-capabilities {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 2rem 0 2.5rem;
+}
+
+.flowmap-capabilities h2 {
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}
+
+.flowmap-capabilities p {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .flowmap-capabilities {
+    grid-template-columns: 1fr;
+  }
+
+  .flowmap-compact-figure {
+    max-width: 100%;
+  }
+}

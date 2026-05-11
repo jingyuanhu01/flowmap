@@ -8,6 +8,7 @@ dependencies = [
     "numpy>=1.22",
     "scipy>=1.9",
     "scikit-learn",
+    "umap-learn",
     "statsmodels",
     "matplotlib"
 ]

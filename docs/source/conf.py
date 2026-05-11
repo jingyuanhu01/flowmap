@@ -1,6 +1,7 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath("../src"))
+os.environ.setdefault("MPLCONFIGDIR", os.path.abspath("../_build/matplotlib"))
+sys.path.insert(0, os.path.abspath("../../src"))
 
 project = "FlowMap"
 author = "Jingyuan Hu"
@@ -15,5 +16,13 @@ extensions = [
 
 napoleon_numpy_docstring = True
 napoleon_google_docstring = False
+autodoc_mock_imports = ["umap"]
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
+html_title = "FlowMap"
+html_static_path = ["_static"]
+html_css_files = ["flowmap.css"]
+html_theme_options = {
+    "light_logo": "flowmap_logo.png",
+    "dark_logo": "flowmap_logo_dark.png",
+}
