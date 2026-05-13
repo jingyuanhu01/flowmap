@@ -1,0 +1,11 @@
+Tutorials
+=========
+
+The tutorial walkthroughs live in the ``example_code/`` directory:
+
+* ``fig3_cell_cycle.ipynb``
+* ``fig4_larry_gradient_field_fp1.ipynb``
+* ``fig5_larry_curvature.ipynb``
+
+These notebooks accompany the working manuscript and show complete FlowMap
+analysis workflows.

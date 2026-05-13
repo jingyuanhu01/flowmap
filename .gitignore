@@ -12,6 +12,16 @@ build/
 dist/
 *.egg-info/
 
+*.h5ad
+*.pkl
+*.joblib
+!example_data/
+!example_data/cell_cycle/
+!example_data/cell_cycle/cell_cycle_33genes.h5ad
+
 .ipynb_checkpoints/
+.numba_cache/
+.matplotlib_cache/
+trash/
 
 .DS_Store

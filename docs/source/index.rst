@@ -4,9 +4,9 @@ FlowMap
 .. raw:: html
 
    <section class="flowmap-hero">
-     <p class="flowmap-kicker">Geometry-aware vector field embeddings</p>
+     <p class="flowmap-kicker">Single-cell RNA velocity geometry</p>
      <p class="flowmap-lede">
-       FlowMap embeds high-dimensional expression and velocity data into a
+       FlowMap embeds single-cell gene expression and RNA velocity data into a
        smooth low-dimensional geometry where cell-state flow can be visualized,
        compared, and analyzed.
      </p>
@@ -20,9 +20,9 @@ FlowMap
    :alt: FlowMap overview schematic
    :class: flowmap-main-figure
 
-   FlowMap integrates expression and velocity, fits smooth manifold geometry,
-   maps vector fields into embedding space, and supports downstream dynamical
-   analysis.
+   FlowMap integrates single-cell expression and RNA velocity, fits smooth
+   manifold geometry, maps vector fields into embedding space, and supports
+   downstream dynamical analysis.
 
 .. raw:: html
 
