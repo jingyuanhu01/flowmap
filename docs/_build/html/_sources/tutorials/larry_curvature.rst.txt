@@ -14,9 +14,12 @@ notebook is available at ``tutorial/larry_curvature_tutorial.ipynb``.
 Load Data
 ---------
 
-The Larry data object is not included in the GitHub repository; download or
-generate it and place it at ``tutorial/larry_flowmap_data.joblib`` before
+The Larry data object is not included in the GitHub repository; download it
+from Figshare and place it at ``tutorial/larry_flowmap_data.joblib`` before
 running the notebook.
+
+Data link:
+`Larry Data Processed with FlowMap <https://figshare.com/articles/dataset/Larry_Data_Processed_with_FlowMap/32258700?file=64501479>`_
 
 .. code-block:: python
 

@@ -1,4 +1,12 @@
+<p align="center">
+  <img src="docs/source/_static/flowmap_logo.png" alt="FlowMap logo" width="220">
+</p>
+
 # FlowMap
+
+<p align="center">
+  <a href="https://flowmap.readthedocs.io/en/latest/index.html">Documentation</a>
+</p>
 
 FlowMap is a Python package for geometry-aware vector field embeddings, with a
 focus on RNA velocity and other dynamical single-cell data. It embeds

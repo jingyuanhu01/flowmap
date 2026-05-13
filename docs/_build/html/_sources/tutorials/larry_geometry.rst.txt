@@ -19,8 +19,11 @@ Load Data
 
 The tutorial uses a ``.joblib`` wrapper that stores the fitted embedder with
 the few metadata fields and gene matrices used below. The file is not included
-in the GitHub repository; download or generate it and place it at
+in the GitHub repository; download it from Figshare and place it at
 ``tutorial/larry_flowmap_data.joblib`` before running the notebook.
+
+Data link:
+`Larry Data Processed with FlowMap <https://figshare.com/articles/dataset/Larry_Data_Processed_with_FlowMap/32258700?file=64501479>`_
 
 .. code-block:: python
 
