@@ -4,7 +4,7 @@ API Reference
 .. toctree::
    :maxdepth: 2
 
-   flowmap
+   flowmap_module
    flowmap.core
    flowmap.geometry
    flowmap.plot
