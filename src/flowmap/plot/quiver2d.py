@@ -9,7 +9,7 @@ from matplotlib import cm
 def plot_2d_quiver(
     X,
     V,
-    color,
+    color=None,
     scale=1.0,
     normalize=False,
     size=10,
@@ -22,13 +22,15 @@ def plot_2d_quiver(
         norms[norms == 0] = 1
         V = V / norms
 
-    cmap_obj = cm.get_cmap(cmap)
-    norm = mcolors.Normalize(
-        vmin=np.min(color),
-        vmax=np.max(color),
-    )
-
-    rgba = cmap_obj(norm(color))
+    if color is None:
+        rgba = "gray"
+    else:
+        cmap_obj = cm.get_cmap(cmap)
+        norm = mcolors.Normalize(
+            vmin=np.min(color),
+            vmax=np.max(color),
+        )
+        rgba = cmap_obj(norm(color))
 
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.set_title(title)
@@ -61,4 +63,3 @@ def plot_2d_quiver(
 
     fig.canvas.draw_idle()
     return fig
-

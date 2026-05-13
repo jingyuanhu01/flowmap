@@ -9,7 +9,7 @@ from matplotlib import cm
 def plot_3d_quiver(
     points,
     derivatives,
-    points_color,
+    points_color=None,
     s=20,
     alpha=0.3,
     arrow_size=0.2,
@@ -30,12 +30,16 @@ def plot_3d_quiver(
     )
     fig.suptitle(title, size=16)
 
-    # --- colormap & normalization ---
-    cmap_obj = cm.get_cmap(cmap)
-    norm = mcolors.Normalize(
-        vmin=np.min(points_color),
-        vmax=np.max(points_color),
-    )
+    if points_color is None:
+        points_color = "gray"
+        arrow_colors = "gray"
+    else:
+        cmap_obj = cm.get_cmap(cmap)
+        norm = mcolors.Normalize(
+            vmin=np.min(points_color),
+            vmax=np.max(points_color),
+        )
+        arrow_colors = cmap_obj(norm(points_color))
 
     # --- scatter ---
     col = ax.scatter(
@@ -43,12 +47,11 @@ def plot_3d_quiver(
         c=points_color,
         s=s,
         alpha=alpha,
-        cmap=cmap_obj,
-        norm=norm,
+        cmap=None if isinstance(points_color, str) else cmap_obj,
+        norm=None if isinstance(points_color, str) else norm,
     )
 
     # --- quiver ---
-    arrow_colors = cmap_obj(norm(points_color))
     ax.quiver(
         x, y, z,
         dx, dy, dz,
@@ -81,7 +84,7 @@ def plot_3d_quiver(
         # remove grid lines
         ax.grid(False)
 
-    if show_colorbar:
+    if show_colorbar and not isinstance(points_color, str):
         fig.colorbar(
             col,
             ax=ax,

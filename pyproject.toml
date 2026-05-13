@@ -10,7 +10,10 @@ dependencies = [
     "scikit-learn",
     "umap-learn",
     "statsmodels",
-    "matplotlib"
+    "matplotlib",
+    "anndata",
+    "joblib",
+    "pandas"
 ]
 
 [project.optional-dependencies]

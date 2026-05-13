@@ -10,7 +10,7 @@ def plot_velocity_stream(
     X_2d,
     spline=None,
     V=None,
-    scatter_color="grey",
+    scatter_color=None,
     grid_size=50,
     grid_density=1.0,
     stream_density=1.0,
@@ -131,47 +131,48 @@ def plot_velocity_stream(
         created_fig = True
 
     # ---- scatter background ----
-    scatter_color = np.asarray(scatter_color)
-
-    if scatter_color.ndim == 0:
+    if scatter_color is None or isinstance(scatter_color, str):
+        color = "grey" if scatter_color is None else scatter_color
         ax.scatter(
             X_2d[:, 0],
             X_2d[:, 1],
             s=scatter_size,
             alpha=scatter_alpha,
-            color=scatter_color,
+            color=color,
             edgecolors="none",
         )
-
-    elif np.issubdtype(scatter_color.dtype, np.number):
-        sc = ax.scatter(
-            X_2d[:, 0],
-            X_2d[:, 1],
-            s=scatter_size,
-            alpha=scatter_alpha,
-            c=scatter_color,
-            cmap=cmap,
-            vmin=vmin,
-            vmax=vmax,
-            edgecolors="none",
-        )
-        if show_colorbar:
-            plt.colorbar(sc, ax=ax)
 
     else:
-        unique_vals = np.unique(scatter_color)
-        cmap_obj = plt.get_cmap(cmap, len(unique_vals))
-        lut = {val: cmap_obj(i) for i, val in enumerate(unique_vals)}
-        mapped = np.array([lut[v] for v in scatter_color])
+        scatter_color = np.asarray(scatter_color)
+        if np.issubdtype(scatter_color.dtype, np.number):
+            sc = ax.scatter(
+                X_2d[:, 0],
+                X_2d[:, 1],
+                s=scatter_size,
+                alpha=scatter_alpha,
+                c=scatter_color,
+                cmap=cmap,
+                vmin=vmin,
+                vmax=vmax,
+                edgecolors="none",
+            )
+            if show_colorbar:
+                plt.colorbar(sc, ax=ax)
 
-        ax.scatter(
-            X_2d[:, 0],
-            X_2d[:, 1],
-            s=scatter_size,
-            alpha=scatter_alpha,
-            color=mapped,
-            edgecolors="none",
-        )
+        else:
+            unique_vals = np.unique(scatter_color)
+            cmap_obj = plt.get_cmap(cmap, len(unique_vals))
+            lut = {val: cmap_obj(i) for i, val in enumerate(unique_vals)}
+            mapped = np.array([lut[v] for v in scatter_color])
+
+            ax.scatter(
+                X_2d[:, 0],
+                X_2d[:, 1],
+                s=scatter_size,
+                alpha=scatter_alpha,
+                color=mapped,
+                edgecolors="none",
+            )
 
     # ---- streamlines ----
     speed = np.sqrt(Vx**2 + Vy**2)

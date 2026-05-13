@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 import numpy as np
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict
 
 
 class GeneGradientAnalyzer:
@@ -30,7 +30,15 @@ class GeneGradientAnalyzer:
     # Initialization
     # ------------------------------------------------------------------
 
-    def __init__(self, emb):
+    def __init__(
+        self,
+        emb,
+        *,
+        cell_indices: Optional[np.ndarray] = None,
+        max_cells: Optional[int] = None,
+        random_state: Optional[int] = 0,
+        verbose: bool = True,
+    ):
         """
         Parameters
         ----------
@@ -41,16 +49,60 @@ class GeneGradientAnalyzer:
             - V_emb
             - spline_gene
             - spline_vf_gene
+        cell_indices : ndarray, optional
+            Cells on which to precompute gene Jacobians and metrics. Indices
+            refer to rows of ``emb.X_emb``.
+        max_cells : int, optional
+            If provided and ``cell_indices`` contains more cells than this,
+            randomly subset to ``max_cells`` before computing Jacobians.
+        random_state : int, optional
+            Seed used when ``max_cells`` triggers random subsampling.
+        verbose : bool, default=True
+            Print progress messages for expensive Jacobian computations.
         """
 
         if not hasattr(emb, "spline_gene"):
             raise RuntimeError("Gene-level splines not fitted.")
 
         self.emb = emb
+        n_cells = emb.X_emb.shape[0]
+        n_genes = getattr(emb, "X_gene", np.empty((n_cells, 0))).shape[1]
 
-        # Precompute Jacobians and pullback metric
-        self.J = emb.spline_gene.compute_jacobians(emb.X_emb)
-        self.metric = emb.spline_gene.compute_metric(emb.X_emb)
+        if cell_indices is None:
+            cell_indices = np.arange(n_cells)
+        else:
+            cell_indices = np.asarray(cell_indices, dtype=int)
+
+        if max_cells is not None and len(cell_indices) > max_cells:
+            rng = np.random.default_rng(random_state)
+            cell_indices = np.sort(
+                rng.choice(cell_indices, size=max_cells, replace=False)
+            )
+
+        self.cell_indices = np.asarray(cell_indices, dtype=int)
+        self._cell_lookup = {idx: i for i, idx in enumerate(self.cell_indices)}
+
+        if verbose:
+            print(
+                "[GeneGradient] Computing expression Jacobians for "
+                f"{len(self.cell_indices)} cells x {n_genes} genes …"
+            )
+            if len(self.cell_indices) < n_cells:
+                print(
+                    "[GeneGradient] Using a cell subset "
+                    f"({len(self.cell_indices)} of {n_cells} cells)."
+                )
+
+        X_eval = emb.X_emb[self.cell_indices]
+        self.J = emb.spline_gene.compute_jacobians(X_eval)
+        self.jacobians = self.J
+        self.metric = emb.spline_gene.compute_metric(X_eval)
+
+        if verbose:
+            print(
+                "[GeneGradient] Done. "
+                f"J {self.J.shape}, metric {self.metric.shape}"
+            )
 
 
     # ------------------------------------------------------------------
@@ -121,57 +173,82 @@ class GeneGradientAnalyzer:
                 Mean angle (radians) relative to velocity direction.
             - magnitudes : ndarray
                 Mean projected gradient magnitude.
+            - gene_indices : ndarray
+                Gene indices corresponding to the returned angles and
+                magnitudes. This may be shorter than the input if no valid
+                local velocity was available.
         """
 
         angles = []
         magnitudes = []
 
-        for g_idx in gene_indices:
+        local_indices = [
+            self._cell_lookup[int(idx)]
+            for idx in np.asarray(neighbor_indices, dtype=int)
+            if int(idx) in self._cell_lookup
+        ]
 
-            vec_sum = np.zeros(2)
-            total_w = 0.0
+        if len(local_indices) == 0:
+            return dict(
+                angles=np.asarray(angles),
+                magnitudes=np.asarray(magnitudes),
+            )
 
-            for c_idx in neighbor_indices:
+        gene_indices = np.asarray(gene_indices, dtype=int)
+        J = self.J[local_indices][:, gene_indices, :]
+        metric = self.metric[local_indices]
+        velocity = self.emb.V_emb[self.cell_indices[local_indices]]
 
-                g = self.metric[c_idx]
-                J_cell = self.J[c_idx]
-                v = self.emb.V_emb[c_idx]
+        grad = np.linalg.solve(metric, np.swapaxes(J, 1, 2))
+        grad = np.swapaxes(grad, 1, 2)
 
-                # Riemannian gradient
-                grad = np.linalg.solve(g, J_cell[g_idx])
+        L = np.linalg.cholesky(
+            metric + 1e-8 * np.eye(metric.shape[-1])[None, :, :]
+        )
+        grad_E = np.einsum("cij,cgj->cgi", L, grad)
+        vel_E = np.einsum("cij,cj->ci", L, velocity)
 
-                # Local orthonormal frame
-                L = np.linalg.cholesky(g + 1e-8 * np.eye(g.shape[0]))
+        v_norm = np.linalg.norm(vel_E, axis=1)
+        valid_cells = v_norm > 1e-8
+        if not np.any(valid_cells):
+            return dict(
+                angles=np.asarray(angles),
+                magnitudes=np.asarray(magnitudes),
+            )
 
-                grad_E = L @ grad
-                vel_E = L @ v
+        grad_E = grad_E[valid_cells]
+        vel_E = vel_E[valid_cells]
+        v_norm = v_norm[valid_cells]
 
-                v_norm = np.linalg.norm(vel_E)
-                if v_norm < 1e-8:
-                    continue
+        e1 = vel_E / v_norm[:, None]
+        if e1.shape[1] != 2:
+            raise ValueError("GeneGradientAnalyzer currently expects 2D embeddings.")
+        e2 = np.column_stack([-e1[:, 1], e1[:, 0]])
 
-                e1 = vel_E / v_norm
-                e2 = np.array([-e1[1], e1[0]])
+        comp_parallel = np.einsum("cgi,ci->cg", grad_E, e1)
+        comp_orth = np.einsum("cgi,ci->cg", grad_E, e2)
 
-                comp_parallel = grad_E @ e1
-                comp_orth = grad_E @ e2
+        if weight == "magnitude":
+            weights = np.linalg.norm(grad_E, axis=2)
+        elif weight == "uniform":
+            weights = np.ones_like(comp_parallel)
+        else:
+            raise ValueError("weight must be 'magnitude' or 'uniform'.")
 
-                w = (
-                    np.linalg.norm(grad_E)
-                    if weight == "magnitude"
-                    else 1.0
-                )
+        vec = np.stack([comp_parallel, comp_orth], axis=2)
+        total_w = weights.sum(axis=0)
+        valid_genes = total_w > 0
+        mean_vec = np.zeros((len(gene_indices), 2), dtype=float)
+        mean_vec[valid_genes] = (
+            (weights[:, valid_genes, None] * vec[:, valid_genes]).sum(axis=0)
+            / total_w[valid_genes, None]
+        )
 
-                vec_sum += w * np.array([comp_parallel, comp_orth])
-                total_w += w
-
-            if total_w > 0:
-                mean_vec = vec_sum / total_w
-                angles.append(np.arctan2(mean_vec[1], mean_vec[0]))
-                magnitudes.append(np.linalg.norm(mean_vec))
+        angles = np.arctan2(mean_vec[valid_genes, 1], mean_vec[valid_genes, 0])
+        magnitudes = np.linalg.norm(mean_vec[valid_genes], axis=1)
 
         return dict(
             angles=np.asarray(angles),
             magnitudes=np.asarray(magnitudes),
+            gene_indices=gene_indices[valid_genes],
         )
-

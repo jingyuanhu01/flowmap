@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
 
-def plot_3d_scatter(points, points_color, title="",
+def plot_3d_scatter(points, points_color=None, title="",
             azim=-60, elev=9,
             grid_interval=2,
             dot_size=5, alpha=0.4):
@@ -23,7 +23,8 @@ def plot_3d_scatter(points, points_color, title="",
     ax.set_facecolor((0, 0, 0, 0))
 
     # Scatter with user-defined size and transparency
-    col = ax.scatter(x, y, z, c=points_color,
+    scatter_kwargs = {"color": "gray"} if points_color is None else {"c": points_color}
+    col = ax.scatter(x, y, z, **scatter_kwargs,
                      s=dot_size, alpha=alpha,
                      edgecolors='none')
 
@@ -38,9 +39,10 @@ def plot_3d_scatter(points, points_color, title="",
     ax.grid(True)
 
     # Colorbar
-    fig.colorbar(col, ax=ax,
-                 orientation="horizontal",
-                 shrink=0.6, aspect=60, pad=0.01)
+    if points_color is not None:
+        fig.colorbar(col, ax=ax,
+                     orientation="horizontal",
+                     shrink=0.6, aspect=60, pad=0.01)
 
     fig.tight_layout()
     fig.canvas.draw_idle()
